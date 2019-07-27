@@ -1,0 +1,1045 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.4" />
+<title>TopicModelling.data_cleaner API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>TopicModelling.data_cleaner</code> module</h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># pip install -r requirements.txt
+
+import os
+import sys
+modulefolder = &#39;\\&#39;.join(os.path.dirname(os.path.realpath(__file__)).split(&#39;\\&#39;)[:-1])
+sys.path.append(modulefolder)
+
+import re
+import time
+import nltk
+import spacy
+
+import pandas as pd
+pd.set_option(&#34;display.max_colwidth&#34;, 200)
+
+from tqdm import tqdm
+from unidecode import unidecode
+from os import listdir
+from os.path import isfile, join
+from multiprocessing import Pool
+from nltk.corpus import stopwords
+
+stopwords_french = stopwords.words(&#39;french&#39;)
+stopwords_french.extend([&#39;nan&#39;, &#39;à&#39;, &#39;les&#39;, &#39;ça&#39;, &#39;cette&#39;, &#39;aussi&#39;, &#39;si&#39;, &#39;faut&#39;, &#39;ils&#39;, &#39;cela&#39;, &#39;car&#39;, &#39;comme&#39;, &#39;tout&#39;,
+                         &#39;peut&#39;, &#39;après&#39;, &#39;deja&#39;, &#39;tous&#39;, &#39;ni&#39;, &#39;la&#39;, &#39;là&#39;, &#39;ceux&#39;, &#39;celles&#39;, &#39;tout&#39;, &#39;toutes&#39;, &#39;le&#39;, &#39;alors&#39;,
+                         &#39;très&#39;, &#39;donc&#39;, &#39;fait&#39;, &#39;al&#39;, &#39;aux&#39;])
+
+stopwords_french = [unidecode(x) for x in stopwords_french]
+
+nlp = spacy.load(&#39;fr&#39;)
+
+
+class DataCleaner:
+    &#34;&#34;&#34;
+    A class used to clean the csv files of our project \n
+    Do not forget to run &#39;pip install -r requirements.txt&#39; to avoid any missing packages errors \n
+    Run in a python terminal : \n
+    `import ntlk` \n
+    `nltk.download(&#39;stopwords&#39;)` for stopwords \n
+    Then run in a terminal : \n
+    `python -m spacy download fr` for lemmatization
+    &#34;&#34;&#34;
+
+    def __init__(self, folder, filename, force=False, user=False, lemma=False):
+        &#34;&#34;&#34;
+        Initialize the DataCleaner \n\n
+        `folder`: the path of the folder containing the data \n
+        `filename`: the file to clean \n
+        NOTE : if `filename == &#39;all&#39; `, all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; will be clean
+        `force`: re-run the cleaner on files are already cleaned \n
+        `user`: merge the 4 datasets inside one grouped by users&#39; id \n
+        `lemma`: to clean with or without lemmatization of the words, by using the package Spacy (VERO LONG COMPUTING
+        TIME) \n
+        &#34;&#34;&#34;
+        self.folder = folder
+        self.filename = filename
+
+        self.force = force
+        self.user = user
+        self.lemma = lemma
+
+    @staticmethod
+    def clean_doc(doc, lemma=False):
+        &#34;&#34;&#34;
+        Clean a string containing an answer \n\n
+        `doc`: a string \n
+        `lemma`: to keep only the lemma of the word of not -&gt; computer intensive \n
+        &#34;&#34;&#34;
+        if not lemma:
+            # removing accent
+            doc = unidecode(doc)
+            # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+            doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+            # removing everything except alphabets
+            doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, doc)
+            # make all text lowercase
+            doc = doc.lower()
+            # remove stopwords
+            tokenized_doc = doc.split()
+            tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+        else:
+            # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+            doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+            # make all text lowercase
+            doc = doc.lower()
+            # Lemmatization
+            tokenized_doc = nlp(doc)
+            tokenized_doc = [word.lemma_ for word in tokenized_doc]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+            # # removing accent
+            clean_doc = unidecode(clean_doc)
+            # removing everything except alphabets
+            clean_doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, clean_doc)
+            # remove stopwords
+            tokenized_doc = clean_doc.split()
+            tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+
+        return clean_doc
+
+    def clean_col(self, df, col_name):
+        &#34;&#34;&#34;
+        Clean one column of the dataset by making all text lowercase and removing : \n
+        - accents \n
+        - everything except alphabets \n
+        - apostrophe character \n
+        - short words \n
+        - stopwords \n\n
+        `df`: the DataFrame containing the dataset \n
+        `col_name`: a string containing the name of the column to clean \n
+        `return`: the column cleaned \n
+        &#34;&#34;&#34;
+        column = df[col_name].fillna(&#39;&#39;)
+
+        clean_column = column.apply(lambda x: DataCleaner.clean_doc(x, self.lemma))
+
+        return clean_column
+
+    def detect_open_answer(self, df, col_name):
+        &#34;&#34;&#34;
+        Detect if the answer is open or closed \n
+        In Topic Modelling, we want to analyse only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `col_name`: the colname to analyse \n
+        `return`: a boolean if the answer is open (True) or closed (False) \n
+        &#34;&#34;&#34;
+        col = df[col_name].fillna(&#39;&#39;)
+        answers = []
+        for i in range(len(col)):
+            if col[i] not in answers:
+                answers.append(col[i])
+            if len(answers) &gt; 5:
+                return True  # It is an open question
+            if i &gt; 100:
+                return False  # It is a closed question (Yes/No/IdK)
+
+    def column_to_keep(self, df):
+        &#34;&#34;&#34;
+        Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a list containing the names of the columns to keep for analyse \n
+        &#34;&#34;&#34;
+        col_to_keep = []
+        col_to_keep.extend([&#39;authorId&#39;, &#39;authorZipCode&#39;, &#39;title&#39;])
+        col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+        return col_to_keep
+
+    def column_to_keep_with_user(self, df):
+        &#34;&#34;&#34;
+        Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a list containing the names of the columns to keep for analyse \n
+        &#34;&#34;&#34;
+        col_to_keep = [&#34;authorId&#34;]
+        col_to_keep.extend([&#34;title&#34;])
+        col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+        return col_to_keep
+
+    def clean_dataframe(self, df):
+        &#34;&#34;&#34;
+        Clean the dataframe \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a new dataframe containing only the columns to keep cleaned \n
+        &#34;&#34;&#34;
+        data = {}
+        col_to_keep = self.column_to_keep(df)
+        col_to_add_but_not_clean = [&#39;authorId&#39;, &#39;authorZipCode&#39;]
+
+        for i in tqdm(range(len(col_to_keep))):
+            col_name = col_to_keep[i]
+            if col_name in col_to_add_but_not_clean and col_name in df.columns:
+                data[col_name] = df[col_name]
+            else:
+                if self.detect_open_answer(df, col_name):
+                    col_clean = self.clean_col(df, col_name)
+                    data[col_name] = col_clean
+
+        return pd.DataFrame(data=data)
+
+    def clean_dataframe_with_user(self, df):
+        &#34;&#34;&#34;
+        Clean the dataframe \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a new dataframe containing only 2 columns : AuthorID et Documents \n
+        Each rows contains a string with all the answers a person made across the 4 datasets \n
+        &#34;&#34;&#34;
+        data = {}
+        col_to_keep = self.column_to_keep_with_user(df)
+
+        for i in tqdm(range(len(col_to_keep))):
+            col_name = col_to_keep[i]
+            if self.detect_open_answer(df, col_name):
+                col_clean = self.clean_col(df, col_name)
+                data[col_name] = col_clean
+                
+        documents = df[col_to_keep[2]].fillna(&#39;&#39;).map(str)
+        for i in range(3, len(col_to_keep)):
+            documents = documents + &#39; &#39; + df[col_to_keep[i]].fillna(&#39;&#39;).map(str)
+            
+        data[&#39;documents&#39;] = documents
+            
+        return pd.DataFrame(data=data)[[&#39;authorId&#39;, &#39;documents&#39;]]
+
+    def clean_file(self, filename):
+        &#34;&#34;&#34;
+        Clean a file and write a new one under the name &#34;clean_&#34;+filename inside the same folder as the file \n\n
+        `filename`: the file to clean \n
+        &#34;&#34;&#34;
+        clean_file_path = os.path.join(self.folder, &#34;clean_&#34; + filename)
+        if os.path.isfile(clean_file_path) and not self.force:
+            print(filename + &#34; is already cleaned!&#34;)
+        else:
+            df = pd.read_csv(os.path.join(self.folder, filename))
+            print(filename + &#34; read&#34;)
+            df_clean = self.clean_dataframe(df)
+            print(filename + &#34; cleaned&#34;)
+            df_clean.to_csv(clean_file_path, encoding=&#34;utf-8&#34;)
+            print(&#34;clean_&#34; + filename + &#34; wrote&#34;)
+    
+    def clean_file_with_user(self, filename):
+        &#34;&#34;&#34;
+        Clean a file and write a new one under the name clean_all_user_df.csv inside the same folder as the file \n\n
+        `filename`: the file to clean \n
+        &#34;&#34;&#34;
+
+        df = pd.read_csv(os.path.join(self.folder, filename))
+        print(filename + &#34; read&#34;)
+        df_clean = self.clean_dataframe_with_user(df)
+        print(filename + &#34; cleaned&#34;)
+        
+        return df_clean
+
+    def concat_answers(self, filename):
+        &#34;&#34;&#34;
+        Concat the open answers of a dataset inside a single columns \n\n
+        `filename`: the filename of the dataset \n
+        `return`: a dataframe with a new column &#39;documents&#39; \n
+        &#34;&#34;&#34;
+        df = pd.read_csv(os.path.join(self.folder, &#34;clean_&#34; + filename))
+        col_to_keep = self.column_to_keep(df)
+        if &#39;authorId&#39; in col_to_keep:
+            col_to_keep.remove(&#39;authorId&#39;)
+        if &#39;authorZipCode&#39; in col_to_keep:
+            col_to_keep.remove(&#39;authorZipCode&#39;)
+        print(&#39;Concatening &#39; + filename)
+        df[&#39;documents&#39;] = df[col_to_keep].fillna(&#39;&#39;).apply(lambda x: &#39; &#39;.join(x.astype(str)), axis=1)
+        print(filename + &#39; concatened&#39;)
+        return df
+
+    def clean(self):
+        &#34;&#34;&#34;
+        Clean all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; \n\n
+        This methods uses multithreading : each core of the local machine is used to clean a different file,
+        in order to same time. \n\n
+        &#34;&#34;&#34;
+        filenames = [f for f in listdir(self.folder) if isfile(join(self.folder, f)) and &#39;.csv&#39; in f]
+        filenames = [f for f in filenames if &#39;clean&#39; not in f and &#39;QUESTIONNAIRE&#39; not in f]
+        if self.filename == &#39;all&#39;:
+            print(&#39;File to clean : &#39;, end=&#34;&#34;)
+            print(filenames)
+            pool = Pool()
+            file_cleaners = pool.map(self.clean_file, filenames)
+            pool.terminate()
+            del pool
+        else :
+            self.clean_file(self.filename)
+
+        if self.user:
+            pool = Pool()
+            if self.force:
+                self.force = False
+            file_cleaners = pool.map(self.clean_file, filenames)
+            pool.terminate()
+            del pool
+            pool = Pool()
+            dfs_concat = pool.map(self.concat_answers, filenames)
+            pool.terminate()
+            del pool
+            all_df_clean = pd.concat(dfs_concat, join=&#39;outer&#39;)
+            print(&#39;Grouping the dataframes by authorId&#39;)
+            all_df_clean = all_df_clean.groupby(&#39;authorId&#39;)[&#39;documents&#39;].apply(
+                lambda x: &#39; &#39;.join(x.astype(str))).reset_index()
+            print(&#39;Dataframes Grouped&#39;)
+            print(&#39;Writting the dataframe to csv&#39;)
+            all_df_clean.to_csv(os.path.join(self.folder, &#39;clean_all_user_df.csv&#39;), encoding=&#39;utf-8&#39;)
+            print(&#39;File wrote&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    folder = &#34;../../data&#34;
+    filename = &#34;DEMOCRATIE_ET_CITOYENNETE.csv&#34;
+    dataCleaner = DataCleaner(folder, filename, force=True, user=False, lemma=False)
+    start = time.time()
+    dataCleaner.clean()
+    end = time.time()
+    print(&#34;Cleaned in %f min&#34; % ((end-start)/60))</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="TopicModelling.data_cleaner.DataCleaner"><code class="flex name class">
+<span>class <span class="ident">DataCleaner</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>A class used to clean the csv files of our project </p>
+<p>Do not forget to run 'pip install -r requirements.txt' to avoid any missing packages errors </p>
+<p>Run in a python terminal : </p>
+<p><code>import ntlk</code> </p>
+<p><code>nltk.download('stopwords')</code> for stopwords </p>
+<p>Then run in a terminal : </p>
+<p><code>python -m spacy download fr</code> for lemmatization</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class DataCleaner:
+    &#34;&#34;&#34;
+    A class used to clean the csv files of our project \n
+    Do not forget to run &#39;pip install -r requirements.txt&#39; to avoid any missing packages errors \n
+    Run in a python terminal : \n
+    `import ntlk` \n
+    `nltk.download(&#39;stopwords&#39;)` for stopwords \n
+    Then run in a terminal : \n
+    `python -m spacy download fr` for lemmatization
+    &#34;&#34;&#34;
+
+    def __init__(self, folder, filename, force=False, user=False, lemma=False):
+        &#34;&#34;&#34;
+        Initialize the DataCleaner \n\n
+        `folder`: the path of the folder containing the data \n
+        `filename`: the file to clean \n
+        NOTE : if `filename == &#39;all&#39; `, all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; will be clean
+        `force`: re-run the cleaner on files are already cleaned \n
+        `user`: merge the 4 datasets inside one grouped by users&#39; id \n
+        `lemma`: to clean with or without lemmatization of the words, by using the package Spacy (VERO LONG COMPUTING
+        TIME) \n
+        &#34;&#34;&#34;
+        self.folder = folder
+        self.filename = filename
+
+        self.force = force
+        self.user = user
+        self.lemma = lemma
+
+    @staticmethod
+    def clean_doc(doc, lemma=False):
+        &#34;&#34;&#34;
+        Clean a string containing an answer \n\n
+        `doc`: a string \n
+        `lemma`: to keep only the lemma of the word of not -&gt; computer intensive \n
+        &#34;&#34;&#34;
+        if not lemma:
+            # removing accent
+            doc = unidecode(doc)
+            # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+            doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+            # removing everything except alphabets
+            doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, doc)
+            # make all text lowercase
+            doc = doc.lower()
+            # remove stopwords
+            tokenized_doc = doc.split()
+            tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+        else:
+            # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+            doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+            # make all text lowercase
+            doc = doc.lower()
+            # Lemmatization
+            tokenized_doc = nlp(doc)
+            tokenized_doc = [word.lemma_ for word in tokenized_doc]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+            # # removing accent
+            clean_doc = unidecode(clean_doc)
+            # removing everything except alphabets
+            clean_doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, clean_doc)
+            # remove stopwords
+            tokenized_doc = clean_doc.split()
+            tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+            clean_doc = &#39; &#39;.join(tokenized_doc)
+
+        return clean_doc
+
+    def clean_col(self, df, col_name):
+        &#34;&#34;&#34;
+        Clean one column of the dataset by making all text lowercase and removing : \n
+        - accents \n
+        - everything except alphabets \n
+        - apostrophe character \n
+        - short words \n
+        - stopwords \n\n
+        `df`: the DataFrame containing the dataset \n
+        `col_name`: a string containing the name of the column to clean \n
+        `return`: the column cleaned \n
+        &#34;&#34;&#34;
+        column = df[col_name].fillna(&#39;&#39;)
+
+        clean_column = column.apply(lambda x: DataCleaner.clean_doc(x, self.lemma))
+
+        return clean_column
+
+    def detect_open_answer(self, df, col_name):
+        &#34;&#34;&#34;
+        Detect if the answer is open or closed \n
+        In Topic Modelling, we want to analyse only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `col_name`: the colname to analyse \n
+        `return`: a boolean if the answer is open (True) or closed (False) \n
+        &#34;&#34;&#34;
+        col = df[col_name].fillna(&#39;&#39;)
+        answers = []
+        for i in range(len(col)):
+            if col[i] not in answers:
+                answers.append(col[i])
+            if len(answers) &gt; 5:
+                return True  # It is an open question
+            if i &gt; 100:
+                return False  # It is a closed question (Yes/No/IdK)
+
+    def column_to_keep(self, df):
+        &#34;&#34;&#34;
+        Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a list containing the names of the columns to keep for analyse \n
+        &#34;&#34;&#34;
+        col_to_keep = []
+        col_to_keep.extend([&#39;authorId&#39;, &#39;authorZipCode&#39;, &#39;title&#39;])
+        col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+        return col_to_keep
+
+    def column_to_keep_with_user(self, df):
+        &#34;&#34;&#34;
+        Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a list containing the names of the columns to keep for analyse \n
+        &#34;&#34;&#34;
+        col_to_keep = [&#34;authorId&#34;]
+        col_to_keep.extend([&#34;title&#34;])
+        col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+        return col_to_keep
+
+    def clean_dataframe(self, df):
+        &#34;&#34;&#34;
+        Clean the dataframe \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a new dataframe containing only the columns to keep cleaned \n
+        &#34;&#34;&#34;
+        data = {}
+        col_to_keep = self.column_to_keep(df)
+        col_to_add_but_not_clean = [&#39;authorId&#39;, &#39;authorZipCode&#39;]
+
+        for i in tqdm(range(len(col_to_keep))):
+            col_name = col_to_keep[i]
+            if col_name in col_to_add_but_not_clean and col_name in df.columns:
+                data[col_name] = df[col_name]
+            else:
+                if self.detect_open_answer(df, col_name):
+                    col_clean = self.clean_col(df, col_name)
+                    data[col_name] = col_clean
+
+        return pd.DataFrame(data=data)
+
+    def clean_dataframe_with_user(self, df):
+        &#34;&#34;&#34;
+        Clean the dataframe \n\n
+        `df`: the dataframe containing the dataset \n
+        `return`: a new dataframe containing only 2 columns : AuthorID et Documents \n
+        Each rows contains a string with all the answers a person made across the 4 datasets \n
+        &#34;&#34;&#34;
+        data = {}
+        col_to_keep = self.column_to_keep_with_user(df)
+
+        for i in tqdm(range(len(col_to_keep))):
+            col_name = col_to_keep[i]
+            if self.detect_open_answer(df, col_name):
+                col_clean = self.clean_col(df, col_name)
+                data[col_name] = col_clean
+                
+        documents = df[col_to_keep[2]].fillna(&#39;&#39;).map(str)
+        for i in range(3, len(col_to_keep)):
+            documents = documents + &#39; &#39; + df[col_to_keep[i]].fillna(&#39;&#39;).map(str)
+            
+        data[&#39;documents&#39;] = documents
+            
+        return pd.DataFrame(data=data)[[&#39;authorId&#39;, &#39;documents&#39;]]
+
+    def clean_file(self, filename):
+        &#34;&#34;&#34;
+        Clean a file and write a new one under the name &#34;clean_&#34;+filename inside the same folder as the file \n\n
+        `filename`: the file to clean \n
+        &#34;&#34;&#34;
+        clean_file_path = os.path.join(self.folder, &#34;clean_&#34; + filename)
+        if os.path.isfile(clean_file_path) and not self.force:
+            print(filename + &#34; is already cleaned!&#34;)
+        else:
+            df = pd.read_csv(os.path.join(self.folder, filename))
+            print(filename + &#34; read&#34;)
+            df_clean = self.clean_dataframe(df)
+            print(filename + &#34; cleaned&#34;)
+            df_clean.to_csv(clean_file_path, encoding=&#34;utf-8&#34;)
+            print(&#34;clean_&#34; + filename + &#34; wrote&#34;)
+    
+    def clean_file_with_user(self, filename):
+        &#34;&#34;&#34;
+        Clean a file and write a new one under the name clean_all_user_df.csv inside the same folder as the file \n\n
+        `filename`: the file to clean \n
+        &#34;&#34;&#34;
+
+        df = pd.read_csv(os.path.join(self.folder, filename))
+        print(filename + &#34; read&#34;)
+        df_clean = self.clean_dataframe_with_user(df)
+        print(filename + &#34; cleaned&#34;)
+        
+        return df_clean
+
+    def concat_answers(self, filename):
+        &#34;&#34;&#34;
+        Concat the open answers of a dataset inside a single columns \n\n
+        `filename`: the filename of the dataset \n
+        `return`: a dataframe with a new column &#39;documents&#39; \n
+        &#34;&#34;&#34;
+        df = pd.read_csv(os.path.join(self.folder, &#34;clean_&#34; + filename))
+        col_to_keep = self.column_to_keep(df)
+        if &#39;authorId&#39; in col_to_keep:
+            col_to_keep.remove(&#39;authorId&#39;)
+        if &#39;authorZipCode&#39; in col_to_keep:
+            col_to_keep.remove(&#39;authorZipCode&#39;)
+        print(&#39;Concatening &#39; + filename)
+        df[&#39;documents&#39;] = df[col_to_keep].fillna(&#39;&#39;).apply(lambda x: &#39; &#39;.join(x.astype(str)), axis=1)
+        print(filename + &#39; concatened&#39;)
+        return df
+
+    def clean(self):
+        &#34;&#34;&#34;
+        Clean all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; \n\n
+        This methods uses multithreading : each core of the local machine is used to clean a different file,
+        in order to same time. \n\n
+        &#34;&#34;&#34;
+        filenames = [f for f in listdir(self.folder) if isfile(join(self.folder, f)) and &#39;.csv&#39; in f]
+        filenames = [f for f in filenames if &#39;clean&#39; not in f and &#39;QUESTIONNAIRE&#39; not in f]
+        if self.filename == &#39;all&#39;:
+            print(&#39;File to clean : &#39;, end=&#34;&#34;)
+            print(filenames)
+            pool = Pool()
+            file_cleaners = pool.map(self.clean_file, filenames)
+            pool.terminate()
+            del pool
+        else :
+            self.clean_file(self.filename)
+
+        if self.user:
+            pool = Pool()
+            if self.force:
+                self.force = False
+            file_cleaners = pool.map(self.clean_file, filenames)
+            pool.terminate()
+            del pool
+            pool = Pool()
+            dfs_concat = pool.map(self.concat_answers, filenames)
+            pool.terminate()
+            del pool
+            all_df_clean = pd.concat(dfs_concat, join=&#39;outer&#39;)
+            print(&#39;Grouping the dataframes by authorId&#39;)
+            all_df_clean = all_df_clean.groupby(&#39;authorId&#39;)[&#39;documents&#39;].apply(
+                lambda x: &#39; &#39;.join(x.astype(str))).reset_index()
+            print(&#39;Dataframes Grouped&#39;)
+            print(&#39;Writting the dataframe to csv&#39;)
+            all_df_clean.to_csv(os.path.join(self.folder, &#39;clean_all_user_df.csv&#39;), encoding=&#39;utf-8&#39;)
+            print(&#39;File wrote&#39;)</code></pre>
+</details>
+<h3>Static methods</h3>
+<dl>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_doc"><code class="name flex">
+<span>def <span class="ident">clean_doc</span></span>(<span>doc, lemma=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean a string containing an answer </p>
+<p><code>doc</code>: a string </p>
+<p><code>lemma</code>: to keep only the lemma of the word of not -&gt; computer intensive</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def clean_doc(doc, lemma=False):
+    &#34;&#34;&#34;
+    Clean a string containing an answer \n\n
+    `doc`: a string \n
+    `lemma`: to keep only the lemma of the word of not -&gt; computer intensive \n
+    &#34;&#34;&#34;
+    if not lemma:
+        # removing accent
+        doc = unidecode(doc)
+        # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+        doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+        # removing everything except alphabets
+        doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, doc)
+        # make all text lowercase
+        doc = doc.lower()
+        # remove stopwords
+        tokenized_doc = doc.split()
+        tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+        clean_doc = &#39; &#39;.join(tokenized_doc)
+    else:
+        # &#34;80km/h 80 km/h 80 kmh&#34; --&gt; &#34;80km/h 80km/h 80km/h&#34;
+        doc = re.sub(r&#39;80 ?km/?h&#39;, &#39;80kmh&#39;, doc)
+        # make all text lowercase
+        doc = doc.lower()
+        # Lemmatization
+        tokenized_doc = nlp(doc)
+        tokenized_doc = [word.lemma_ for word in tokenized_doc]
+        clean_doc = &#39; &#39;.join(tokenized_doc)
+        # # removing accent
+        clean_doc = unidecode(clean_doc)
+        # removing everything except alphabets
+        clean_doc = re.sub(r&#39;[^a-zA-Z0-9]&#39;, &#39; &#39;, clean_doc)
+        # remove stopwords
+        tokenized_doc = clean_doc.split()
+        tokenized_doc = [word for word in tokenized_doc if word not in stopwords_french]
+        clean_doc = &#39; &#39;.join(tokenized_doc)
+
+    return clean_doc</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="TopicModelling.data_cleaner.DataCleaner.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, folder, filename, force=False, user=False, lemma=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initialize the DataCleaner </p>
+<p><code>folder</code>: the path of the folder containing the data </p>
+<p><code>filename</code>: the file to clean </p>
+<dl>
+<dt><strong><code>NOTE</code></strong> :&ensp;<code>if</code> <code>`filename</code> == <code>'all'</code> <code>,</code>all<code></code>the<code></code>csv<code></code>files<code></code>not<code></code>starting<code></code>with<code></code>'clean'<code>or</code>'QUESTIONNAIRE'<code></code>will<code></code>be<code></code>clean`</dt>
+<dd>&nbsp;</dd>
+</dl>
+<p><code>force</code>: re-run the cleaner on files are already cleaned </p>
+<p><code>user</code>: merge the 4 datasets inside one grouped by users' id </p>
+<p><code>lemma</code>: to clean with or without lemmatization of the words, by using the package Spacy (VERO LONG COMPUTING
+TIME)</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, folder, filename, force=False, user=False, lemma=False):
+    &#34;&#34;&#34;
+    Initialize the DataCleaner \n\n
+    `folder`: the path of the folder containing the data \n
+    `filename`: the file to clean \n
+    NOTE : if `filename == &#39;all&#39; `, all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; will be clean
+    `force`: re-run the cleaner on files are already cleaned \n
+    `user`: merge the 4 datasets inside one grouped by users&#39; id \n
+    `lemma`: to clean with or without lemmatization of the words, by using the package Spacy (VERO LONG COMPUTING
+    TIME) \n
+    &#34;&#34;&#34;
+    self.folder = folder
+    self.filename = filename
+
+    self.force = force
+    self.user = user
+    self.lemma = lemma</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean"><code class="name flex">
+<span>def <span class="ident">clean</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean all the csv files not starting with 'clean' or 'QUESTIONNAIRE' </p>
+<p>This methods uses multithreading : each core of the local machine is used to clean a different file,
+in order to same time.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean(self):
+    &#34;&#34;&#34;
+    Clean all the csv files not starting with &#39;clean&#39; or &#39;QUESTIONNAIRE&#39; \n\n
+    This methods uses multithreading : each core of the local machine is used to clean a different file,
+    in order to same time. \n\n
+    &#34;&#34;&#34;
+    filenames = [f for f in listdir(self.folder) if isfile(join(self.folder, f)) and &#39;.csv&#39; in f]
+    filenames = [f for f in filenames if &#39;clean&#39; not in f and &#39;QUESTIONNAIRE&#39; not in f]
+    if self.filename == &#39;all&#39;:
+        print(&#39;File to clean : &#39;, end=&#34;&#34;)
+        print(filenames)
+        pool = Pool()
+        file_cleaners = pool.map(self.clean_file, filenames)
+        pool.terminate()
+        del pool
+    else :
+        self.clean_file(self.filename)
+
+    if self.user:
+        pool = Pool()
+        if self.force:
+            self.force = False
+        file_cleaners = pool.map(self.clean_file, filenames)
+        pool.terminate()
+        del pool
+        pool = Pool()
+        dfs_concat = pool.map(self.concat_answers, filenames)
+        pool.terminate()
+        del pool
+        all_df_clean = pd.concat(dfs_concat, join=&#39;outer&#39;)
+        print(&#39;Grouping the dataframes by authorId&#39;)
+        all_df_clean = all_df_clean.groupby(&#39;authorId&#39;)[&#39;documents&#39;].apply(
+            lambda x: &#39; &#39;.join(x.astype(str))).reset_index()
+        print(&#39;Dataframes Grouped&#39;)
+        print(&#39;Writting the dataframe to csv&#39;)
+        all_df_clean.to_csv(os.path.join(self.folder, &#39;clean_all_user_df.csv&#39;), encoding=&#39;utf-8&#39;)
+        print(&#39;File wrote&#39;)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_col"><code class="name flex">
+<span>def <span class="ident">clean_col</span></span>(<span>self, df, col_name)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean one column of the dataset by making all text lowercase and removing : </p>
+<ul>
+<li>
+<p>accents </p>
+</li>
+<li>
+<p>everything except alphabets </p>
+</li>
+<li>
+<p>apostrophe character </p>
+</li>
+<li>
+<p>short words </p>
+</li>
+<li>
+<p>stopwords </p>
+</li>
+</ul>
+<p><code>df</code>: the DataFrame containing the dataset </p>
+<p><code>col_name</code>: a string containing the name of the column to clean </p>
+<p><code>return</code>: the column cleaned</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean_col(self, df, col_name):
+    &#34;&#34;&#34;
+    Clean one column of the dataset by making all text lowercase and removing : \n
+    - accents \n
+    - everything except alphabets \n
+    - apostrophe character \n
+    - short words \n
+    - stopwords \n\n
+    `df`: the DataFrame containing the dataset \n
+    `col_name`: a string containing the name of the column to clean \n
+    `return`: the column cleaned \n
+    &#34;&#34;&#34;
+    column = df[col_name].fillna(&#39;&#39;)
+
+    clean_column = column.apply(lambda x: DataCleaner.clean_doc(x, self.lemma))
+
+    return clean_column</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_dataframe"><code class="name flex">
+<span>def <span class="ident">clean_dataframe</span></span>(<span>self, df)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean the dataframe </p>
+<p><code>df</code>: the dataframe containing the dataset </p>
+<p><code>return</code>: a new dataframe containing only the columns to keep cleaned</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean_dataframe(self, df):
+    &#34;&#34;&#34;
+    Clean the dataframe \n\n
+    `df`: the dataframe containing the dataset \n
+    `return`: a new dataframe containing only the columns to keep cleaned \n
+    &#34;&#34;&#34;
+    data = {}
+    col_to_keep = self.column_to_keep(df)
+    col_to_add_but_not_clean = [&#39;authorId&#39;, &#39;authorZipCode&#39;]
+
+    for i in tqdm(range(len(col_to_keep))):
+        col_name = col_to_keep[i]
+        if col_name in col_to_add_but_not_clean and col_name in df.columns:
+            data[col_name] = df[col_name]
+        else:
+            if self.detect_open_answer(df, col_name):
+                col_clean = self.clean_col(df, col_name)
+                data[col_name] = col_clean
+
+    return pd.DataFrame(data=data)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_dataframe_with_user"><code class="name flex">
+<span>def <span class="ident">clean_dataframe_with_user</span></span>(<span>self, df)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean the dataframe </p>
+<p><code>df</code>: the dataframe containing the dataset </p>
+<p><code>return</code>: a new dataframe containing only 2 columns : AuthorID et Documents </p>
+<p>Each rows contains a string with all the answers a person made across the 4 datasets</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean_dataframe_with_user(self, df):
+    &#34;&#34;&#34;
+    Clean the dataframe \n\n
+    `df`: the dataframe containing the dataset \n
+    `return`: a new dataframe containing only 2 columns : AuthorID et Documents \n
+    Each rows contains a string with all the answers a person made across the 4 datasets \n
+    &#34;&#34;&#34;
+    data = {}
+    col_to_keep = self.column_to_keep_with_user(df)
+
+    for i in tqdm(range(len(col_to_keep))):
+        col_name = col_to_keep[i]
+        if self.detect_open_answer(df, col_name):
+            col_clean = self.clean_col(df, col_name)
+            data[col_name] = col_clean
+            
+    documents = df[col_to_keep[2]].fillna(&#39;&#39;).map(str)
+    for i in range(3, len(col_to_keep)):
+        documents = documents + &#39; &#39; + df[col_to_keep[i]].fillna(&#39;&#39;).map(str)
+        
+    data[&#39;documents&#39;] = documents
+        
+    return pd.DataFrame(data=data)[[&#39;authorId&#39;, &#39;documents&#39;]]</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_file"><code class="name flex">
+<span>def <span class="ident">clean_file</span></span>(<span>self, filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean a file and write a new one under the name "clean_"+filename inside the same folder as the file </p>
+<p><code>filename</code>: the file to clean</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean_file(self, filename):
+    &#34;&#34;&#34;
+    Clean a file and write a new one under the name &#34;clean_&#34;+filename inside the same folder as the file \n\n
+    `filename`: the file to clean \n
+    &#34;&#34;&#34;
+    clean_file_path = os.path.join(self.folder, &#34;clean_&#34; + filename)
+    if os.path.isfile(clean_file_path) and not self.force:
+        print(filename + &#34; is already cleaned!&#34;)
+    else:
+        df = pd.read_csv(os.path.join(self.folder, filename))
+        print(filename + &#34; read&#34;)
+        df_clean = self.clean_dataframe(df)
+        print(filename + &#34; cleaned&#34;)
+        df_clean.to_csv(clean_file_path, encoding=&#34;utf-8&#34;)
+        print(&#34;clean_&#34; + filename + &#34; wrote&#34;)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.clean_file_with_user"><code class="name flex">
+<span>def <span class="ident">clean_file_with_user</span></span>(<span>self, filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clean a file and write a new one under the name clean_all_user_df.csv inside the same folder as the file </p>
+<p><code>filename</code>: the file to clean</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def clean_file_with_user(self, filename):
+    &#34;&#34;&#34;
+    Clean a file and write a new one under the name clean_all_user_df.csv inside the same folder as the file \n\n
+    `filename`: the file to clean \n
+    &#34;&#34;&#34;
+
+    df = pd.read_csv(os.path.join(self.folder, filename))
+    print(filename + &#34; read&#34;)
+    df_clean = self.clean_dataframe_with_user(df)
+    print(filename + &#34; cleaned&#34;)
+    
+    return df_clean</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.column_to_keep"><code class="name flex">
+<span>def <span class="ident">column_to_keep</span></span>(<span>self, df)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Determine the column to keep in the cleaned dataframe : only the open answers </p>
+<p><code>df</code>: the dataframe containing the dataset </p>
+<p><code>return</code>: a list containing the names of the columns to keep for analyse</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def column_to_keep(self, df):
+    &#34;&#34;&#34;
+    Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+    `df`: the dataframe containing the dataset \n
+    `return`: a list containing the names of the columns to keep for analyse \n
+    &#34;&#34;&#34;
+    col_to_keep = []
+    col_to_keep.extend([&#39;authorId&#39;, &#39;authorZipCode&#39;, &#39;title&#39;])
+    col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+    return col_to_keep</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.column_to_keep_with_user"><code class="name flex">
+<span>def <span class="ident">column_to_keep_with_user</span></span>(<span>self, df)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Determine the column to keep in the cleaned dataframe : only the open answers </p>
+<p><code>df</code>: the dataframe containing the dataset </p>
+<p><code>return</code>: a list containing the names of the columns to keep for analyse</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def column_to_keep_with_user(self, df):
+    &#34;&#34;&#34;
+    Determine the column to keep in the cleaned dataframe : only the open answers \n\n
+    `df`: the dataframe containing the dataset \n
+    `return`: a list containing the names of the columns to keep for analyse \n
+    &#34;&#34;&#34;
+    col_to_keep = [&#34;authorId&#34;]
+    col_to_keep.extend([&#34;title&#34;])
+    col_to_keep.extend([colname for colname in df.columns if &#39;QUXV&#39; in colname])
+    return col_to_keep</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.concat_answers"><code class="name flex">
+<span>def <span class="ident">concat_answers</span></span>(<span>self, filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Concat the open answers of a dataset inside a single columns </p>
+<p><code>filename</code>: the filename of the dataset </p>
+<p><code>return</code>: a dataframe with a new column 'documents'</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def concat_answers(self, filename):
+    &#34;&#34;&#34;
+    Concat the open answers of a dataset inside a single columns \n\n
+    `filename`: the filename of the dataset \n
+    `return`: a dataframe with a new column &#39;documents&#39; \n
+    &#34;&#34;&#34;
+    df = pd.read_csv(os.path.join(self.folder, &#34;clean_&#34; + filename))
+    col_to_keep = self.column_to_keep(df)
+    if &#39;authorId&#39; in col_to_keep:
+        col_to_keep.remove(&#39;authorId&#39;)
+    if &#39;authorZipCode&#39; in col_to_keep:
+        col_to_keep.remove(&#39;authorZipCode&#39;)
+    print(&#39;Concatening &#39; + filename)
+    df[&#39;documents&#39;] = df[col_to_keep].fillna(&#39;&#39;).apply(lambda x: &#39; &#39;.join(x.astype(str)), axis=1)
+    print(filename + &#39; concatened&#39;)
+    return df</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.data_cleaner.DataCleaner.detect_open_answer"><code class="name flex">
+<span>def <span class="ident">detect_open_answer</span></span>(<span>self, df, col_name)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Detect if the answer is open or closed </p>
+<p>In Topic Modelling, we want to analyse only the open answers </p>
+<p><code>df</code>: the dataframe containing the dataset </p>
+<p><code>col_name</code>: the colname to analyse </p>
+<p><code>return</code>: a boolean if the answer is open (True) or closed (False)</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def detect_open_answer(self, df, col_name):
+    &#34;&#34;&#34;
+    Detect if the answer is open or closed \n
+    In Topic Modelling, we want to analyse only the open answers \n\n
+    `df`: the dataframe containing the dataset \n
+    `col_name`: the colname to analyse \n
+    `return`: a boolean if the answer is open (True) or closed (False) \n
+    &#34;&#34;&#34;
+    col = df[col_name].fillna(&#39;&#39;)
+    answers = []
+    for i in range(len(col)):
+        if col[i] not in answers:
+            answers.append(col[i])
+        if len(answers) &gt; 5:
+            return True  # It is an open question
+        if i &gt; 100:
+            return False  # It is a closed question (Yes/No/IdK)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="TopicModelling" href="index.html">TopicModelling</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="TopicModelling.data_cleaner.DataCleaner" href="#TopicModelling.data_cleaner.DataCleaner">DataCleaner</a></code></h4>
+<ul class="">
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.__init__" href="#TopicModelling.data_cleaner.DataCleaner.__init__">__init__</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean" href="#TopicModelling.data_cleaner.DataCleaner.clean">clean</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_col" href="#TopicModelling.data_cleaner.DataCleaner.clean_col">clean_col</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_dataframe" href="#TopicModelling.data_cleaner.DataCleaner.clean_dataframe">clean_dataframe</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_dataframe_with_user" href="#TopicModelling.data_cleaner.DataCleaner.clean_dataframe_with_user">clean_dataframe_with_user</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_doc" href="#TopicModelling.data_cleaner.DataCleaner.clean_doc">clean_doc</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_file" href="#TopicModelling.data_cleaner.DataCleaner.clean_file">clean_file</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.clean_file_with_user" href="#TopicModelling.data_cleaner.DataCleaner.clean_file_with_user">clean_file_with_user</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.column_to_keep" href="#TopicModelling.data_cleaner.DataCleaner.column_to_keep">column_to_keep</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.column_to_keep_with_user" href="#TopicModelling.data_cleaner.DataCleaner.column_to_keep_with_user">column_to_keep_with_user</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.concat_answers" href="#TopicModelling.data_cleaner.DataCleaner.concat_answers">concat_answers</a></code></li>
+<li><code><a title="TopicModelling.data_cleaner.DataCleaner.detect_open_answer" href="#TopicModelling.data_cleaner.DataCleaner.detect_open_answer">detect_open_answer</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

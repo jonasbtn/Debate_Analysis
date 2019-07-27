@@ -1,0 +1,2374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.4" />
+<title>TopicModelling.Topic_Modelling API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>TopicModelling.Topic_Modelling</code> module</h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">import os
+import warnings
+import logging
+import datetime
+import traceback
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sb
+import matplotlib.colors as mcolors
+import wordcloud as wc
+
+from tqdm import tqdm
+from sklearn.feature_extraction.text import CountVectorizer
+from collections import Counter
+from sklearn.manifold import TSNE
+from bokeh.plotting import figure, show, output_file, save
+from bokeh.models import Label
+from matplotlib.backends.backend_pdf import PdfPages
+from PIL import Image
+
+from TopicModelling.data_cleaner import DataCleaner
+
+
+class TopicModelling:
+    &#34;&#34;&#34;
+    An abstract class to run a topic modelling on a dataset to extract the most recurrent topics. \n
+    THIS CLASS CANNOT BE INSTANCED DIRECTLY. \n
+    To run a topic modelling, choose a model between LSA and LDA. The run it by instancing an LSA or LDA object. \n
+    Do not forget to run &#39;pip install -r requirements.txt&#39; to avoid any missing packages errors \n
+    &#34;&#34;&#34;
+
+    def __init__(self, folder, filename, columns, n_topics, sample_only=True, display=False, report=False,
+                 cluster=False, inference=False):
+        &#34;&#34;&#34;
+        Initialize the Topic Modelling object \n
+
+        `folder`: the path of the folder containing the data \n
+        `filename`: the name of the file to analyse \n
+        `columns`: a list with the name of the column to analyse inside the file, [&#39;all&#39;] to include all the dataset \n
+        `n_topics`: the number of topics to extract \n
+        `sample_only`: to analyze only a sample of the dataset in case of lack of computational power (limits to
+        10K observations) \n
+        `display`: to display each plot in a new windows \n
+        `report`: to generate a pdf report contaning all the output and graphs of the topic modelling analysis \n
+        NOTE : The reports are located in the folder containing the data inside the folder &#34;grand_debat_report&#34; \n
+        `cluster`: to create a cluster of the topics --&gt; Computer Intensive and very long \n
+        `inference`: used to analyse the dataset of all users \n
+        &#34;&#34;&#34;
+
+        self.folder = folder
+        self.filename = filename
+
+        self.inference = inference
+
+        now = datetime.datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S_&#34;)
+
+        self.logname = now + filename[:len(filename)-4]
+
+        if self.inference:
+            self.columns = [&#39;documents&#39;]
+            self.logname += &#39;_inference&#39;
+
+        else:
+            self.columns = columns
+
+            if self.columns == [&#39;all&#39;]:
+                self.logname += &#39;_all&#39;
+            else:
+                all_columns = list(pd.read_csv(os.path.join(self.folder, self.filename), nrows=1).columns)
+                col_indices = &#34;&#34;
+                for colname in self.columns:
+                    if colname in all_columns:
+                        self.logname += &#34;_&#34; + str(all_columns.index(colname))
+                    else:
+                        warnings.warn(colname + &#34; not in the dataset --&gt; Ignoring&#34;)
+                        self.columns.remove(colname)
+
+        if not os.path.isdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;)):
+            os.mkdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;))
+
+        self.logname = os.path.join(self.folder, &#34;grand_debat_reports&#34;, self.logname + &#34;.log&#34;)
+
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
+
+        self.logger_file_handler = logging.FileHandler(filename=self.logname)
+        self.logger_file_handler.setLevel(logging.INFO)
+        formatter = logging.Formatter(
+            fmt=&#39;%(asctime)s-%(msecs)d %(name)s %(levelname)s %(message)s \n&#39;,
+            datefmt=&#39;%Y-%m-%d %H:%M:%S&#39;
+        )
+        self.logger_file_handler.setFormatter(formatter)
+        self.logger.addHandler(self.logger_file_handler)
+
+        self.report = report
+        if self.report:
+            report_name = self.logname[:len(self.logname)-4] + &#34;_report.pdf&#34;
+            self.pdf = PdfPages(report_name)
+
+        if not os.path.isfile(os.path.join(folder, &#34;clean_&#34; + filename)):
+            print(&#34;Cleaning file&#34;)
+            self.logger.info(&#34;Cleaning file&#34;)
+            if filename == &#34;all_user_df.csv&#34;:
+                dataCleaner = DataCleaner(folder, &#39;all&#39;, force=False, user=True, lemma=False)
+            else:
+                dataCleaner = DataCleaner(folder, filename, force=True, user=False, lemma=False)
+            dataCleaner.clean()
+            print(&#34;File Cleaned&#34;)
+            self.logger.info(&#34;File Cleaned&#34;)
+
+        self.sample_only = sample_only
+
+        if self.sample_only:
+            self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename), nrows=1000)
+        else:
+            self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename))
+
+        self.documents = self.initiate_documents(self.df, self.columns)
+
+        if (self.documents is None) or self.documents.empty is True:
+            raise ValueError(&#39;Data Not Loaded, check self.documents&#39;)
+
+        print(&#39;Data Loaded : %d answers to analyse in file : %s&#39; % (len(self.documents), filename))
+        self.logger.info(&#34;Data Loaded : %d answers to analyse in file : %s&#34; % (len(self.documents), filename))
+
+        print(&#39;Analysing column : &#39; + str(columns))
+        self.logger.info(&#39;Analysing column : &#39; + str(columns))
+
+        self.n_topics = n_topics
+
+        self._display = display
+        self._cluster = cluster
+
+        if not self._display:
+            plt.ioff()
+
+        print(&#39;Preprocessing the data&#39;)
+        self.logger.info(&#39;Preprocessing the data&#39;)
+        self.preprocessing()
+        print(&#39;Preprocessing Done&#39;)
+        self.logger.info(&#34;Preprocessing Done&#34;)
+
+        # Variable to be initiated later
+        # self.model
+        # self.topic_matrix
+        # self.keys
+        # self.count_vectorizer
+        # self.document_term_matrix
+        # self.categories
+        # self.counts
+        # self.top_words
+        # self.mean_topic_vectors
+
+
+    @staticmethod
+    def initiate_documents(df, columns):
+        &#34;&#34;&#34;
+        `df`: the dataframe \n
+        `columns`: the columns to add \n
+        `return` a list of documents \n
+        &#34;&#34;&#34;
+        # initiating the list of documents
+        # if multiple columns, the columns are concatenated
+
+        all_columns = df.columns.tolist()
+        if type(columns) is not list:
+            raise ValueError(&#39;columns must be a list!&#39;)
+        if columns == [&#39;all&#39;]:
+            columns_to_load = [colname for colname in all_columns if colname == &#39;title&#39; or colname.startswith(&#39;QUXV&#39;)]
+        else:
+            columns_to_load = columns
+        for col in columns_to_load:
+            if col not in all_columns:
+                warnings.warn(col + &#39; is not in the documents --&gt; ignored&#39;)
+                columns_to_load.remove(col)
+        documents = df[columns_to_load[0]].fillna(&#39;&#39;).map(str)
+        for i in range(1, len(columns_to_load)):
+            documents = documents + &#39; &#39; + df[columns_to_load[i]].fillna(&#39;&#39;).map(str)
+        return documents
+
+    def preprocessing(self):
+        &#34;&#34;&#34;
+        Initiate the document term matrix
+        &#34;&#34;&#34;
+        self.count_vectorizer = CountVectorizer(stop_words=&#39;english&#39;)
+        self.document_term_matrix = self.count_vectorizer.fit_transform(self.documents.astype(&#39;U&#39;))
+
+    def get_keys(self, topic_matrix):
+        &#34;&#34;&#34;
+        returns an integer list of predicted topic categories for a given topic matrix \n
+        For example : topic_matrix[0] = [0.04166669, 0.04166669, 0.04166669, 0.70833314, 0.04166669,
+       0.0416667 , 0.0416667 , 0.0416667 ] means that the first document belongs to the topic 3 with the highest probability \n
+
+        `topic_matrix`: a topic_matrix \n
+        `return` an integer list \n
+        &#34;&#34;&#34;
+        keys = []
+        for i in range(topic_matrix.shape[0]):
+            keys.append(topic_matrix[i].argmax())
+
+        self.keys = keys
+
+    def keys_to_counts(self):
+        &#34;&#34;&#34;
+        the get_keys method has to be executed at least once to run this method \n
+
+        `return` returns a tuple of topic categories and their accompanying magnitudes for the list of keys \n
+        &#34;&#34;&#34;
+        count_pairs = Counter(self.keys).items()
+        self.categories = [pair[0] for pair in count_pairs]
+        self.counts = [pair[1] for pair in count_pairs]
+
+    def get_top_n_words(self, n, keys, document_term_matrix, count_vectorizer):
+        &#34;&#34;&#34;
+        `n`: number of top words to compute for each topic \n
+        `keys`:  an integer list obtaining with the method get_keys \n
+        `document_term_matrix`: a document/term matrix obtaing with a CountVectorizer \n
+        `count_vectorizer`: a CountVectorizer object used to create the document term matrix \n
+        `return` returns a list of n_topic strings, where each string contains the n most common
+        words in a predicted category, in order \n
+        &#34;&#34;&#34;
+        top_word_indices = []
+        for topic in range(self.n_topics):
+            temp_vector_sum = 0
+            found = False
+            for i in range(len(keys)):
+                if keys[i] == topic:
+                    temp_vector_sum += document_term_matrix[i]
+                    found = True
+            if found:
+                temp_vector_sum = temp_vector_sum.toarray()
+                top_n_word_indices = np.flip(np.argsort(temp_vector_sum)[0][-n:], 0)
+                top_word_indices.append(top_n_word_indices)
+            else:
+                top_word_indices.append([])
+        self.top_words = []
+        for topic in top_word_indices:
+            topic_words = []
+            for index in topic:
+                temp_word_vector = np.zeros((1, document_term_matrix.shape[1]))
+                temp_word_vector[:, index] = 1
+                the_word = count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+                topic_words.append(the_word.encode(&#39;ascii&#39;).decode(&#39;utf-8&#39;))
+            self.top_words.append(&#34; &#34;.join(topic_words))
+
+    def display_top_n_word(self):
+        &#34;&#34;&#34;
+        Display a bar chart with the number of documents for each topic \n
+        &#34;&#34;&#34;
+        for i in range(len(self.top_words)):
+            print(&#34;Topic {}: &#34;.format(i), self.top_words[i])
+            self.logger.info(&#34;Topic %d: %s&#34; % (i, self.top_words[i]))
+
+        labels = [&#39;Topic {}: \n&#39;.format(i) + &#39; &#39;.join(self.top_words[i].split(&#39; &#39;)[0:2]) for i in self.categories]
+
+        fig, ax = plt.subplots(figsize=(16, 8))
+        ax.bar(self.categories, self.counts)
+        ax.set_xticks(self.categories)
+        ax.set_xticklabels(labels)
+        ax.set_title(&#39;Topic Category Counts&#39;)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    @staticmethod
+    def dimensional_reduction_tsne(topic_matrix):
+        &#34;&#34;&#34;
+        Reduce the dimension of the topic matrix to 2D in order to display the cluster of a graph \n\n
+        `topic_matrix`: a topic matrix \n
+        `return` a 2D vector of the topic matrix \n
+        &#34;&#34;&#34;
+        tsne_model = TSNE(n_components=2, perplexity=50, learning_rate=100,
+                          n_iter=2000, verbose=1, random_state=0, angle=0.75)
+        tsne_vectors = tsne_model.fit_transform(topic_matrix)
+        return tsne_vectors
+
+    def get_mean_topic_vectors(self, keys, two_dim_vectors):
+        &#34;&#34;&#34;
+        `keys`: a list of the topics of each documents\n
+        `two_dim_vectors`: a two dimensional vector reduced by tsne \n
+        `return` a list of centroid vectors from each predicted topic category \n
+        &#34;&#34;&#34;
+        mean_topic_vectors = []
+        for t in range(self.n_topics):
+            articles_in_that_topic = []
+            for i in range(len(keys)):
+                if keys[i] == t:
+                    articles_in_that_topic.append(two_dim_vectors[i])
+
+            articles_in_that_topic = np.vstack(articles_in_that_topic)
+            mean_article_in_that_topic = np.mean(articles_in_that_topic, axis=0)
+            mean_topic_vectors.append(mean_article_in_that_topic)
+        self.mean_topic_vectors = mean_topic_vectors
+        return mean_topic_vectors
+
+    def display_cluster(self, tsne_vectors):
+        # output_notebook()
+        colormap = np.array([
+            &#34;#1f77b4&#34;, &#34;#aec7e8&#34;, &#34;#ff7f0e&#34;, &#34;#ffbb78&#34;, &#34;#2ca02c&#34;,
+            &#34;#98df8a&#34;, &#34;#d62728&#34;, &#34;#ff9896&#34;, &#34;#9467bd&#34;, &#34;#c5b0d5&#34;,
+            &#34;#8c564b&#34;, &#34;#c49c94&#34;, &#34;#e377c2&#34;, &#34;#f7b6d2&#34;, &#34;#7f7f7f&#34;,
+            &#34;#c7c7c7&#34;, &#34;#bcbd22&#34;, &#34;#dbdb8d&#34;, &#34;#17becf&#34;, &#34;#9edae5&#34;])
+        colormap = colormap[:self.n_topics]
+
+        plot = figure(title=&#34;t-SNE Clustering of {} LSA Topics&#34;.format(self.n_topics), plot_width=1000, plot_height=1000)
+        plot.scatter(x=tsne_vectors[:, 0], y=tsne_vectors[:, 1], color=colormap[self.keys])
+
+        for t in range(self.n_topics):
+            label = Label(x=self.mean_topic_vectors[t][0], y=self.mean_topic_vectors[t][1],
+                          text=&#39; &#39;.join(self.top_words[t].split(&#39; &#39;)[0:2]),
+                          text_color=colormap[t])
+            plot.add_layout(label)
+
+        if self.report:
+            filename = self.logname[:len(self.logname)-4] + &#34;_cluster.html&#34;
+            output_file(filename)
+            save(plot)
+            print(&#34;Cluster saved to html&#34;)
+            self.logger.info(&#34;Cluster saved to html&#34;)
+        if self._display:
+            show(plot)
+
+    @staticmethod
+    def postal_code_preprocessing(df, col=&#39;authorZipCode&#39;):
+        &#34;&#34;&#34;
+        Preprocessing of the column postal code to keep only the first 2 digits \n
+        `df`: the dataframe containing a columns of postal codes \n
+        `col`: the name of the column containing the postal codes \n
+        `return` a series containing the postal codes \n
+        &#34;&#34;&#34;
+        postal_codes = df[col].fillna(0).astype(str)
+        postal_codes = postal_codes.apply(lambda x: &#39;0&#39; + x[:1] if (len(x) == 1 or x[1] == &#39;.&#39;) else (
+            x if (len(x) &lt;= 2 or x[2] == &#39;.&#39;) else (x[:3] if (x[:2] == &#39;97&#39; or x[:3] == &#39;999&#39;) else x[:2])))
+        return postal_codes
+
+    @staticmethod
+    def region_preprocessing(df, col=&#39;authorZipCode&#39;):
+        &#34;&#34;&#34;
+        Convert the postal codes to regions of France \n\n
+        `df`: the dataframe containing a columns of postal codes \n
+        `col`: the name of the column containing the postal codes  \n
+        `return` the original dataframe with a new column &#39;region&#39; \n
+        &#34;&#34;&#34;
+        postal_codes = TopicModelling.postal_code_preprocessing(df)
+        regions = postal_codes.apply(TopicModelling.find_region)
+        df[&#39;region&#39;] = regions
+        return df
+
+    @staticmethod
+    def find_region(postal_code):
+        &#34;&#34;&#34;
+        Find the region of a postal code \n\n
+        `postal_code`: a postal code with 2 digits \n
+        `return` the region of the postal code \n
+        &#34;&#34;&#34;
+        REGIONS = {
+            &#39;Auvergne-Rhône-Alpes&#39;: [&#39;01&#39;, &#39;03&#39;, &#39;07&#39;, &#39;15&#39;, &#39;26&#39;, &#39;38&#39;, &#39;42&#39;, &#39;43&#39;, &#39;63&#39;, &#39;69&#39;, &#39;73&#39;, &#39;74&#39;],
+            &#39;Bourgogne-Franche-Comté&#39;: [&#39;21&#39;, &#39;25&#39;, &#39;39&#39;, &#39;58&#39;, &#39;70&#39;, &#39;71&#39;, &#39;89&#39;, &#39;90&#39;],
+            &#39;Bretagne&#39;: [&#39;35&#39;, &#39;22&#39;, &#39;56&#39;, &#39;29&#39;],
+            &#39;Centre-Val de Loire&#39;: [&#39;18&#39;, &#39;28&#39;, &#39;36&#39;, &#39;37&#39;, &#39;41&#39;, &#39;45&#39;],
+            &#39;Corse&#39;: [&#39;2A&#39;, &#39;2B&#39;],
+            &#39;Grand Est&#39;: [&#39;08&#39;, &#39;10&#39;, &#39;51&#39;, &#39;52&#39;, &#39;54&#39;, &#39;55&#39;, &#39;57&#39;, &#39;67&#39;, &#39;68&#39;, &#39;88&#39;],
+            &#39;Guadeloupe&#39;: [&#39;971&#39;],
+            &#39;Guyane&#39;: [&#39;973&#39;],
+            &#39;Hauts-de-France&#39;: [&#39;02&#39;, &#39;59&#39;, &#39;60&#39;, &#39;62&#39;, &#39;80&#39;],
+            &#39;Île-de-France&#39;: [&#39;75&#39;, &#39;77&#39;, &#39;78&#39;, &#39;91&#39;, &#39;92&#39;, &#39;93&#39;, &#39;94&#39;, &#39;95&#39;],
+            &#39;La Réunion&#39;: [&#39;974&#39;],
+            &#39;Martinique&#39;: [&#39;972&#39;],
+            &#39;Normandie&#39;: [&#39;14&#39;, &#39;27&#39;, &#39;50&#39;, &#39;61&#39;, &#39;76&#39;],
+            &#39;Nouvelle-Aquitaine&#39;: [&#39;16&#39;, &#39;17&#39;, &#39;19&#39;, &#39;23&#39;, &#39;24&#39;, &#39;33&#39;, &#39;40&#39;, &#39;47&#39;, &#39;64&#39;, &#39;79&#39;, &#39;86&#39;, &#39;87&#39;],
+            &#39;Occitanie&#39;: [&#39;09&#39;, &#39;11&#39;, &#39;12&#39;, &#39;30&#39;, &#39;31&#39;, &#39;32&#39;, &#39;34&#39;, &#39;46&#39;, &#39;48&#39;, &#39;65&#39;, &#39;66&#39;, &#39;81&#39;, &#39;82&#39;],
+            &#39;Pays de la Loire&#39;: [&#39;44&#39;, &#39;49&#39;, &#39;53&#39;, &#39;72&#39;, &#39;85&#39;],
+            &#39;Provence-Alpes-Côte d\&#39;Azur&#39;: [&#39;04&#39;, &#39;05&#39;, &#39;06&#39;, &#39;13&#39;, &#39;83&#39;, &#39;84&#39;],
+        }
+        for key,value in REGIONS.items():
+            if postal_code in value:
+                return key
+
+        return &#39;Undefined&#39;
+
+    def topic_postal_code(self, region=False, percentage=False):
+        &#34;&#34;&#34;
+        Analyse the importance of each topic per postal codes or region \n\n
+        `region`: to group the postal codes into region or note \n
+        `percentage`: to display in percentage or in number of occurence \n
+        &#34;&#34;&#34;
+        if &#39;authorZipCode&#39; not in self.df.columns:
+            return
+
+        if region:
+            postal_codes = TopicModelling.region_preprocessing(self.df)[&#39;region&#39;]
+        else:
+            postal_codes = TopicModelling.postal_code_preprocessing(self.df)
+
+        postal_codes_index = dict.fromkeys(postal_codes)
+        postal_codes_unique = list(postal_codes_index.keys())
+
+        if not region:
+            postal_codes_unique = [int(float(x)) for x in postal_codes_unique]
+            postal_codes_unique.sort()
+            postal_codes_unique = [str(x).zfill(2) for x in postal_codes_unique]
+
+        for key in list(postal_codes_index):
+            if not region:
+                key = str(int(float(key))).zfill(2)
+            postal_codes_index[key] = postal_codes_unique.index(key)
+
+        count_topic_postal = np.zeros((len(postal_codes_unique), self.n_topics))
+
+        for i in tqdm(range(len(self.keys))):
+            if not region:
+                count_topic_postal[postal_codes_index[str(int(float(postal_codes[i]))).zfill(2)]][self.keys[i]] += 1
+            else:
+                count_topic_postal[postal_codes_index[postal_codes[i]]][self.keys[i]] += 1
+
+        self.df_count_topic_postal = pd.DataFrame(data=count_topic_postal, index=postal_codes_unique)
+        self.df_count_topic_postal.columns = [&#39;Topic {}&#39;.format(i) for i in range(self.n_topics)]
+
+        if percentage:
+            self.df_count_topic_postal = self.df_count_topic_postal.div(self.df_count_topic_postal.sum(axis=1), axis=0)
+            self.df_count_topic_postal.fillna(0)
+
+        fig, ax = plt.subplots(figsize=(14, 10))
+        ax = sb.heatmap(self.df_count_topic_postal, cmap=&#34;YlGnBu&#34;, ax=ax)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    def get_topics_words_weigths_counts(self, n_words=50):
+        &#34;&#34;&#34;
+        Create a dataframe containing in each row : a word, its topic, the number of occurence inside the topic,
+        and its weigths inside the topics \n\n
+        `n_words`: the number of words per topic \n
+        the dataframe is accessible inside the attribute self.df_topics_words_weigths_counts \n
+        &#34;&#34;&#34;
+        self.topics_words_weigths = self.model.components_ / self.model.components_.sum(axis=1)[:, np.newaxis]
+
+        topics_words_weigths_counts = []
+
+        documents_by_topics = {}
+        words_counts_by_topic = {}
+
+        for i in range(self.n_topics):
+            documents_by_topics[i] = []
+            words_counts_by_topic[i] = {}
+
+        for i in range(len(self.documents)):
+            documents_by_topics[self.keys[i]].append(self.documents[i])
+
+        for topic, documents in documents_by_topics.items():
+            count_vectorizer = CountVectorizer()
+            try:
+                count_vectorizer.fit(documents)
+            except Exception as e:
+                print(&#34;type error: &#34; + str(e))
+                print(traceback.format_exc())
+                continue
+            words_counts_by_topic[topic] = count_vectorizer.vocabulary_
+            del count_vectorizer
+
+        for i in tqdm(range(self.topics_words_weigths.shape[0])):
+            topic_words_weigths = self.topics_words_weigths[i]
+            top_n_words_index = np.argsort(topic_words_weigths)[::-1][:n_words]
+
+            for j in tqdm(range(len(top_n_words_index))):
+                index = top_n_words_index[j]
+                temp_word_vector = np.zeros((1, self.document_term_matrix.shape[1]))
+                temp_word_vector[:, index] = 1
+                the_word = self.count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+
+                if the_word in words_counts_by_topic[i]:
+                    topics_words_weigths_counts.append(
+                        [i, the_word, topic_words_weigths[index], words_counts_by_topic[i][the_word]])
+
+        self.df_topics_words_weigths_counts = pd.DataFrame(data=topics_words_weigths_counts,
+                                                   columns=[&#39;topic_id&#39;, &#39;word&#39;, &#39;importance&#39;, &#39;word_count&#39;])
+
+    def display_wordcloud(self, topic_number):
+        &#34;&#34;&#34;
+        Display a wordcloud of the words of a topic by weight \n
+        `topic_number`: the number of the topic \n
+        &#34;&#34;&#34;
+        df_text = self.df_topics_words_weigths_counts
+        df_text = df_text.loc[df_text[&#39;topic_id&#39;] == topic_number]
+        words = df_text[&#39;word&#39;].values
+        importance = df_text[&#39;importance&#39;].values
+        number = df_text[&#39;word_count&#39;]
+
+        # Transformer en nombre de mots a avoir en fonction de l&#39;importance?
+        importance = 10000*importance
+        importance = importance.astype(int)
+
+        # Avoir la liste de mots qui va passer dans le wordcloud
+        words_total = np.copy(words)
+        for i in range(number.shape[0]):
+            w = words[i]+&#34; &#34;
+            words_total[i] = w*importance[i]
+
+        # Transformer en string
+        text = &#39;&#39;.join(words_total)
+
+        # Enlever le char &#39;, facultatif
+        text.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+        mask = np.array((Image.open(&#39;cloud_mask2.png&#39;)))
+
+        # Dessiner le nuage de mots
+        wordcloud = wc.WordCloud(background_color=&#34;white&#34;, collocations=False, mask=mask).generate(str(text))
+
+        fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+        ax.imshow(wordcloud, interpolation=&#34;bilinear&#34;)
+        ax.set_axis_off()
+
+        plt.title(&#34;Word Cloud by weight of Topic &#34; + str(topic_number))
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    def display_topics_words_weights_counts(self, n_words=15):
+        &#34;&#34;&#34;
+        Plot Word Count and Weights of Topic Keywords \n
+        &#34;&#34;&#34;
+        df = self.df_topics_words_weigths_counts
+        cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+
+        for i in range(self.n_topics):
+
+            data = df.loc[df.topic_id == i, :][:n_words]
+
+            if data.empty:
+                continue
+
+            fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+
+            ax.bar(x=&#39;word&#39;, height=&#34;word_count&#34;, data=data, color=cols[i%len(cols)], width=0.5,
+                   alpha=0.3,
+                   label=&#39;Word Count&#39;)
+            ax_twin = ax.twinx()
+            ax_twin.bar(x=&#39;word&#39;, height=&#34;importance&#34;, data=data, color=cols[i%len(cols)], width=0.2,
+                        label=&#39;Weights&#39;)
+            ax.set_ylabel(&#39;Word Count&#39;, color=cols[i%len(cols)])
+            ax.set_title(&#39;Topic: &#39; + str(i), color=cols[i%len(cols)], fontsize=16)
+            ax.tick_params(axis=&#39;y&#39;, left=False)
+            ax.set_xticklabels(data[&#39;word&#39;], rotation=30, horizontalalignment=&#39;right&#39;)
+            ax.legend(loc=&#39;upper left&#39;)
+            ax_twin.legend(loc=&#39;upper right&#39;)
+
+            fig.tight_layout(w_pad=2)
+            fig.suptitle(&#39;Word Count and Importance of Topic Keywords&#39;, fontsize=22, y=1.05)
+
+            if self.report:
+                self.pdf.savefig(fig)
+
+            if self._display:
+                plt.show()
+            else:
+                plt.close(fig)
+
+            self.display_wordcloud(i)
+
+    def topic_correlation(self, topic_matrix):
+        &#34;&#34;&#34;
+        Analyse the correlation between topic \n \n
+        `topic_matrix`: self.topic_matrix \n
+        &#34;&#34;&#34;
+        data = pd.DataFrame(data=topic_matrix)
+        corr = data.corr()
+        fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+        cax = ax.matshow(corr, cmap=&#39;coolwarm&#39;, vmin=-1, vmax=1)
+        fig.colorbar(cax)
+        ticks = np.arange(0, len(data.columns), 1)
+        ax.set_xticks(ticks)
+        plt.xticks(rotation=90)
+        ax.set_yticks(ticks)
+        ax.set_xticklabels(data.columns)
+        ax.set_yticklabels(data.columns)
+
+        fig.suptitle(&#39;Topic Correlation&#39;)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+        # fig = plt.figure(figsize=(16,8))
+        # fig.subplots_adjust(hspace=0.4, wspace=0.4)
+        #
+        # for i in range(1, 11):
+        #     ax = fig.add_subplot(1, 10, i)
+        #     resh_data = data.loc[list(range(30 * i, 30 * (i + 1))), :]
+        #     cax = ax.matshow(resh_data, cmap=&#39;coolwarm&#39;, vmin=0, vmax=1)
+        #     ticks = np.arange(0, len(resh_data.columns), 1)
+        #     ax.set_xticks(ticks)
+        #     plt.xticks(rotation=90)
+        #     ax.set_xticklabels(resh_data.columns)
+        #     fig.colorbar(cax)
+        #
+        # plt.tight_layout()
+        #
+        # if self.report:
+        #     self.pdf.savefig(fig)
+        #
+        # if self._display:
+        #     plt.show()
+        # else:
+        #     plt.close(fig)
+        #
+        # matrix = topic_matrix.copy()
+        #
+        # nuanced_data = [0, 0, 0, 0, 0, 0, 0, 0]
+        # nuanced_data = np.array(nuanced_data)
+        # for i in range(len(matrix)):
+        #     j = 0
+        #     while j &lt; 8 :
+        #         if matrix[i][j] &lt; 0.75 :
+        #             j += 1
+        #         else:
+        #             j = 10
+        #     if j == 8 :
+        #         nuanced_data = np.vstack((nuanced_data, matrix[i]))
+        #
+        # n_removed_answer = data.shape[0] - nuanced_data.shape[0]
+        #
+        # print(str(n_removed_answer) + &#34; answers have been removed to keep only the one allowing inference&#34;)
+        # self.logger.info(str(n_removed_answer) + &#34; answers have been removed to keep only the one allowing inference&#34;)
+        #
+        # nuanced_data = pd.DataFrame(data=nuanced_data)
+        #
+        # fig = plt.figure(figsize=(16,8))
+        # fig.subplots_adjust(hspace=0.4, wspace=0.4)
+        #
+        # for i in range(1, 11):
+        #     ax = fig.add_subplot(1, 10, i)
+        #     resh_data = nuanced_data.loc[list(range(30 * (i+7000), 30 * (i + 7000+ 1))), :]
+        #     cax = ax.matshow(resh_data, cmap=&#39;coolwarm&#39;, vmin=0, vmax=1)
+        #     ticks = np.arange(0, len(resh_data.columns), 1)
+        #     ax.set_xticks(ticks)
+        #     plt.xticks(rotation=90)
+        #     ax.set_xticklabels(resh_data.columns)
+        #     fig.colorbar(cax)
+        #
+        # plt.tight_layout()
+        #
+        # if self.report:
+        #     self.pdf.savefig(fig)
+        #
+        # if self._display:
+        #     plt.show()
+        # else:
+        #     plt.close(fig)
+
+    def summary(self, topic_matrix):
+        &#34;&#34;&#34;
+        Run the topic modelling analyse of the topic_matrix given in parameters \n\n
+        `topic_matrix`: the topic matrix of the model \n
+        &#34;&#34;&#34;
+        self.get_keys(topic_matrix)
+
+        self.keys_to_counts()
+
+        print(&#39;Computing top words&#39;)
+        self.logger.info(&#39;Computing top words&#39;)
+        self.get_top_n_words(30, self.keys, self.document_term_matrix, self.count_vectorizer)
+
+        print(&#39;Displaying top words&#39;)
+        self.logger.info(&#39;Displaying top words&#39;)
+        self.display_top_n_word()
+
+        print(&#39;Computing topics per postal code by counts&#39;)
+        self.logger.info(&#39;Computing topics per postal code by counts&#39;)
+        self.topic_postal_code(region=False, percentage=False)
+
+        print(&#39;Computing topics per postal code by percentage&#39;)
+        self.logger.info(&#39;Computing topics per postal code by percentage&#39;)
+        self.topic_postal_code(region=False, percentage=True)
+
+        self.topic_postal_code(region=True, percentage=False)
+
+        self.topic_postal_code(region=True, percentage=True)
+
+        print(&#39;Computing words weights per topics&#39;)
+        self.logger.info(&#39;Computing words weigths per topics&#39;)
+        self.get_topics_words_weigths_counts(n_words=50)
+
+        print(&#39;Displaying words weigths per topics&#39;)
+        self.logger.info(&#39;Displaying words weigths per topics&#39;)
+        self.display_topics_words_weights_counts(n_words=20)
+
+        print(&#39;Topic Correlation&#39;)
+        self.logger.info(&#39;Topic Correlation&#39;)
+        self.topic_correlation(topic_matrix)
+
+        if self.report:
+            self.pdf.close()
+
+        if self._cluster:
+            print(&#39;Dimensional Reduction&#39;)
+            self.logger.info(&#39;Dimensional Reduction&#39;)
+            tsne_vectors = self.dimensional_reduction_tsne(topic_matrix)
+
+            print(&#39;Get Mean Topic Vectors&#39;)
+            self.logger.info(&#39;Get Mean Topic Vectors&#39;)
+            self.get_mean_topic_vectors(self.keys, tsne_vectors)
+
+            print(&#39;Displaying Cluster&#39;)
+            self.logger.info(&#39;Displaying Cluster&#39;)
+            self.display_cluster(tsne_vectors)
+
+        print(&#39;File Analysed !&#39;)
+        self.logger.info(&#39;File Analysed !&#39;)
+
+        self.logger.removeHandler(self.logger_file_handler)
+        del self.logger, self.logger_file_handler</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling"><code class="flex name class">
+<span>class <span class="ident">TopicModelling</span></span>
+</code></dt>
+<dd>
+<section class="desc"><p>An abstract class to run a topic modelling on a dataset to extract the most recurrent topics. </p>
+<p>THIS CLASS CANNOT BE INSTANCED DIRECTLY. </p>
+<p>To run a topic modelling, choose a model between LSA and LDA. The run it by instancing an LSA or LDA object. </p>
+<p>Do not forget to run 'pip install -r requirements.txt' to avoid any missing packages errors</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class TopicModelling:
+    &#34;&#34;&#34;
+    An abstract class to run a topic modelling on a dataset to extract the most recurrent topics. \n
+    THIS CLASS CANNOT BE INSTANCED DIRECTLY. \n
+    To run a topic modelling, choose a model between LSA and LDA. The run it by instancing an LSA or LDA object. \n
+    Do not forget to run &#39;pip install -r requirements.txt&#39; to avoid any missing packages errors \n
+    &#34;&#34;&#34;
+
+    def __init__(self, folder, filename, columns, n_topics, sample_only=True, display=False, report=False,
+                 cluster=False, inference=False):
+        &#34;&#34;&#34;
+        Initialize the Topic Modelling object \n
+
+        `folder`: the path of the folder containing the data \n
+        `filename`: the name of the file to analyse \n
+        `columns`: a list with the name of the column to analyse inside the file, [&#39;all&#39;] to include all the dataset \n
+        `n_topics`: the number of topics to extract \n
+        `sample_only`: to analyze only a sample of the dataset in case of lack of computational power (limits to
+        10K observations) \n
+        `display`: to display each plot in a new windows \n
+        `report`: to generate a pdf report contaning all the output and graphs of the topic modelling analysis \n
+        NOTE : The reports are located in the folder containing the data inside the folder &#34;grand_debat_report&#34; \n
+        `cluster`: to create a cluster of the topics --&gt; Computer Intensive and very long \n
+        `inference`: used to analyse the dataset of all users \n
+        &#34;&#34;&#34;
+
+        self.folder = folder
+        self.filename = filename
+
+        self.inference = inference
+
+        now = datetime.datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S_&#34;)
+
+        self.logname = now + filename[:len(filename)-4]
+
+        if self.inference:
+            self.columns = [&#39;documents&#39;]
+            self.logname += &#39;_inference&#39;
+
+        else:
+            self.columns = columns
+
+            if self.columns == [&#39;all&#39;]:
+                self.logname += &#39;_all&#39;
+            else:
+                all_columns = list(pd.read_csv(os.path.join(self.folder, self.filename), nrows=1).columns)
+                col_indices = &#34;&#34;
+                for colname in self.columns:
+                    if colname in all_columns:
+                        self.logname += &#34;_&#34; + str(all_columns.index(colname))
+                    else:
+                        warnings.warn(colname + &#34; not in the dataset --&gt; Ignoring&#34;)
+                        self.columns.remove(colname)
+
+        if not os.path.isdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;)):
+            os.mkdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;))
+
+        self.logname = os.path.join(self.folder, &#34;grand_debat_reports&#34;, self.logname + &#34;.log&#34;)
+
+        self.logger = logging.getLogger()
+        self.logger.setLevel(logging.INFO)
+
+        self.logger_file_handler = logging.FileHandler(filename=self.logname)
+        self.logger_file_handler.setLevel(logging.INFO)
+        formatter = logging.Formatter(
+            fmt=&#39;%(asctime)s-%(msecs)d %(name)s %(levelname)s %(message)s \n&#39;,
+            datefmt=&#39;%Y-%m-%d %H:%M:%S&#39;
+        )
+        self.logger_file_handler.setFormatter(formatter)
+        self.logger.addHandler(self.logger_file_handler)
+
+        self.report = report
+        if self.report:
+            report_name = self.logname[:len(self.logname)-4] + &#34;_report.pdf&#34;
+            self.pdf = PdfPages(report_name)
+
+        if not os.path.isfile(os.path.join(folder, &#34;clean_&#34; + filename)):
+            print(&#34;Cleaning file&#34;)
+            self.logger.info(&#34;Cleaning file&#34;)
+            if filename == &#34;all_user_df.csv&#34;:
+                dataCleaner = DataCleaner(folder, &#39;all&#39;, force=False, user=True, lemma=False)
+            else:
+                dataCleaner = DataCleaner(folder, filename, force=True, user=False, lemma=False)
+            dataCleaner.clean()
+            print(&#34;File Cleaned&#34;)
+            self.logger.info(&#34;File Cleaned&#34;)
+
+        self.sample_only = sample_only
+
+        if self.sample_only:
+            self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename), nrows=1000)
+        else:
+            self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename))
+
+        self.documents = self.initiate_documents(self.df, self.columns)
+
+        if (self.documents is None) or self.documents.empty is True:
+            raise ValueError(&#39;Data Not Loaded, check self.documents&#39;)
+
+        print(&#39;Data Loaded : %d answers to analyse in file : %s&#39; % (len(self.documents), filename))
+        self.logger.info(&#34;Data Loaded : %d answers to analyse in file : %s&#34; % (len(self.documents), filename))
+
+        print(&#39;Analysing column : &#39; + str(columns))
+        self.logger.info(&#39;Analysing column : &#39; + str(columns))
+
+        self.n_topics = n_topics
+
+        self._display = display
+        self._cluster = cluster
+
+        if not self._display:
+            plt.ioff()
+
+        print(&#39;Preprocessing the data&#39;)
+        self.logger.info(&#39;Preprocessing the data&#39;)
+        self.preprocessing()
+        print(&#39;Preprocessing Done&#39;)
+        self.logger.info(&#34;Preprocessing Done&#34;)
+
+        # Variable to be initiated later
+        # self.model
+        # self.topic_matrix
+        # self.keys
+        # self.count_vectorizer
+        # self.document_term_matrix
+        # self.categories
+        # self.counts
+        # self.top_words
+        # self.mean_topic_vectors
+
+
+    @staticmethod
+    def initiate_documents(df, columns):
+        &#34;&#34;&#34;
+        `df`: the dataframe \n
+        `columns`: the columns to add \n
+        `return` a list of documents \n
+        &#34;&#34;&#34;
+        # initiating the list of documents
+        # if multiple columns, the columns are concatenated
+
+        all_columns = df.columns.tolist()
+        if type(columns) is not list:
+            raise ValueError(&#39;columns must be a list!&#39;)
+        if columns == [&#39;all&#39;]:
+            columns_to_load = [colname for colname in all_columns if colname == &#39;title&#39; or colname.startswith(&#39;QUXV&#39;)]
+        else:
+            columns_to_load = columns
+        for col in columns_to_load:
+            if col not in all_columns:
+                warnings.warn(col + &#39; is not in the documents --&gt; ignored&#39;)
+                columns_to_load.remove(col)
+        documents = df[columns_to_load[0]].fillna(&#39;&#39;).map(str)
+        for i in range(1, len(columns_to_load)):
+            documents = documents + &#39; &#39; + df[columns_to_load[i]].fillna(&#39;&#39;).map(str)
+        return documents
+
+    def preprocessing(self):
+        &#34;&#34;&#34;
+        Initiate the document term matrix
+        &#34;&#34;&#34;
+        self.count_vectorizer = CountVectorizer(stop_words=&#39;english&#39;)
+        self.document_term_matrix = self.count_vectorizer.fit_transform(self.documents.astype(&#39;U&#39;))
+
+    def get_keys(self, topic_matrix):
+        &#34;&#34;&#34;
+        returns an integer list of predicted topic categories for a given topic matrix \n
+        For example : topic_matrix[0] = [0.04166669, 0.04166669, 0.04166669, 0.70833314, 0.04166669,
+       0.0416667 , 0.0416667 , 0.0416667 ] means that the first document belongs to the topic 3 with the highest probability \n
+
+        `topic_matrix`: a topic_matrix \n
+        `return` an integer list \n
+        &#34;&#34;&#34;
+        keys = []
+        for i in range(topic_matrix.shape[0]):
+            keys.append(topic_matrix[i].argmax())
+
+        self.keys = keys
+
+    def keys_to_counts(self):
+        &#34;&#34;&#34;
+        the get_keys method has to be executed at least once to run this method \n
+
+        `return` returns a tuple of topic categories and their accompanying magnitudes for the list of keys \n
+        &#34;&#34;&#34;
+        count_pairs = Counter(self.keys).items()
+        self.categories = [pair[0] for pair in count_pairs]
+        self.counts = [pair[1] for pair in count_pairs]
+
+    def get_top_n_words(self, n, keys, document_term_matrix, count_vectorizer):
+        &#34;&#34;&#34;
+        `n`: number of top words to compute for each topic \n
+        `keys`:  an integer list obtaining with the method get_keys \n
+        `document_term_matrix`: a document/term matrix obtaing with a CountVectorizer \n
+        `count_vectorizer`: a CountVectorizer object used to create the document term matrix \n
+        `return` returns a list of n_topic strings, where each string contains the n most common
+        words in a predicted category, in order \n
+        &#34;&#34;&#34;
+        top_word_indices = []
+        for topic in range(self.n_topics):
+            temp_vector_sum = 0
+            found = False
+            for i in range(len(keys)):
+                if keys[i] == topic:
+                    temp_vector_sum += document_term_matrix[i]
+                    found = True
+            if found:
+                temp_vector_sum = temp_vector_sum.toarray()
+                top_n_word_indices = np.flip(np.argsort(temp_vector_sum)[0][-n:], 0)
+                top_word_indices.append(top_n_word_indices)
+            else:
+                top_word_indices.append([])
+        self.top_words = []
+        for topic in top_word_indices:
+            topic_words = []
+            for index in topic:
+                temp_word_vector = np.zeros((1, document_term_matrix.shape[1]))
+                temp_word_vector[:, index] = 1
+                the_word = count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+                topic_words.append(the_word.encode(&#39;ascii&#39;).decode(&#39;utf-8&#39;))
+            self.top_words.append(&#34; &#34;.join(topic_words))
+
+    def display_top_n_word(self):
+        &#34;&#34;&#34;
+        Display a bar chart with the number of documents for each topic \n
+        &#34;&#34;&#34;
+        for i in range(len(self.top_words)):
+            print(&#34;Topic {}: &#34;.format(i), self.top_words[i])
+            self.logger.info(&#34;Topic %d: %s&#34; % (i, self.top_words[i]))
+
+        labels = [&#39;Topic {}: \n&#39;.format(i) + &#39; &#39;.join(self.top_words[i].split(&#39; &#39;)[0:2]) for i in self.categories]
+
+        fig, ax = plt.subplots(figsize=(16, 8))
+        ax.bar(self.categories, self.counts)
+        ax.set_xticks(self.categories)
+        ax.set_xticklabels(labels)
+        ax.set_title(&#39;Topic Category Counts&#39;)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    @staticmethod
+    def dimensional_reduction_tsne(topic_matrix):
+        &#34;&#34;&#34;
+        Reduce the dimension of the topic matrix to 2D in order to display the cluster of a graph \n\n
+        `topic_matrix`: a topic matrix \n
+        `return` a 2D vector of the topic matrix \n
+        &#34;&#34;&#34;
+        tsne_model = TSNE(n_components=2, perplexity=50, learning_rate=100,
+                          n_iter=2000, verbose=1, random_state=0, angle=0.75)
+        tsne_vectors = tsne_model.fit_transform(topic_matrix)
+        return tsne_vectors
+
+    def get_mean_topic_vectors(self, keys, two_dim_vectors):
+        &#34;&#34;&#34;
+        `keys`: a list of the topics of each documents\n
+        `two_dim_vectors`: a two dimensional vector reduced by tsne \n
+        `return` a list of centroid vectors from each predicted topic category \n
+        &#34;&#34;&#34;
+        mean_topic_vectors = []
+        for t in range(self.n_topics):
+            articles_in_that_topic = []
+            for i in range(len(keys)):
+                if keys[i] == t:
+                    articles_in_that_topic.append(two_dim_vectors[i])
+
+            articles_in_that_topic = np.vstack(articles_in_that_topic)
+            mean_article_in_that_topic = np.mean(articles_in_that_topic, axis=0)
+            mean_topic_vectors.append(mean_article_in_that_topic)
+        self.mean_topic_vectors = mean_topic_vectors
+        return mean_topic_vectors
+
+    def display_cluster(self, tsne_vectors):
+        # output_notebook()
+        colormap = np.array([
+            &#34;#1f77b4&#34;, &#34;#aec7e8&#34;, &#34;#ff7f0e&#34;, &#34;#ffbb78&#34;, &#34;#2ca02c&#34;,
+            &#34;#98df8a&#34;, &#34;#d62728&#34;, &#34;#ff9896&#34;, &#34;#9467bd&#34;, &#34;#c5b0d5&#34;,
+            &#34;#8c564b&#34;, &#34;#c49c94&#34;, &#34;#e377c2&#34;, &#34;#f7b6d2&#34;, &#34;#7f7f7f&#34;,
+            &#34;#c7c7c7&#34;, &#34;#bcbd22&#34;, &#34;#dbdb8d&#34;, &#34;#17becf&#34;, &#34;#9edae5&#34;])
+        colormap = colormap[:self.n_topics]
+
+        plot = figure(title=&#34;t-SNE Clustering of {} LSA Topics&#34;.format(self.n_topics), plot_width=1000, plot_height=1000)
+        plot.scatter(x=tsne_vectors[:, 0], y=tsne_vectors[:, 1], color=colormap[self.keys])
+
+        for t in range(self.n_topics):
+            label = Label(x=self.mean_topic_vectors[t][0], y=self.mean_topic_vectors[t][1],
+                          text=&#39; &#39;.join(self.top_words[t].split(&#39; &#39;)[0:2]),
+                          text_color=colormap[t])
+            plot.add_layout(label)
+
+        if self.report:
+            filename = self.logname[:len(self.logname)-4] + &#34;_cluster.html&#34;
+            output_file(filename)
+            save(plot)
+            print(&#34;Cluster saved to html&#34;)
+            self.logger.info(&#34;Cluster saved to html&#34;)
+        if self._display:
+            show(plot)
+
+    @staticmethod
+    def postal_code_preprocessing(df, col=&#39;authorZipCode&#39;):
+        &#34;&#34;&#34;
+        Preprocessing of the column postal code to keep only the first 2 digits \n
+        `df`: the dataframe containing a columns of postal codes \n
+        `col`: the name of the column containing the postal codes \n
+        `return` a series containing the postal codes \n
+        &#34;&#34;&#34;
+        postal_codes = df[col].fillna(0).astype(str)
+        postal_codes = postal_codes.apply(lambda x: &#39;0&#39; + x[:1] if (len(x) == 1 or x[1] == &#39;.&#39;) else (
+            x if (len(x) &lt;= 2 or x[2] == &#39;.&#39;) else (x[:3] if (x[:2] == &#39;97&#39; or x[:3] == &#39;999&#39;) else x[:2])))
+        return postal_codes
+
+    @staticmethod
+    def region_preprocessing(df, col=&#39;authorZipCode&#39;):
+        &#34;&#34;&#34;
+        Convert the postal codes to regions of France \n\n
+        `df`: the dataframe containing a columns of postal codes \n
+        `col`: the name of the column containing the postal codes  \n
+        `return` the original dataframe with a new column &#39;region&#39; \n
+        &#34;&#34;&#34;
+        postal_codes = TopicModelling.postal_code_preprocessing(df)
+        regions = postal_codes.apply(TopicModelling.find_region)
+        df[&#39;region&#39;] = regions
+        return df
+
+    @staticmethod
+    def find_region(postal_code):
+        &#34;&#34;&#34;
+        Find the region of a postal code \n\n
+        `postal_code`: a postal code with 2 digits \n
+        `return` the region of the postal code \n
+        &#34;&#34;&#34;
+        REGIONS = {
+            &#39;Auvergne-Rhône-Alpes&#39;: [&#39;01&#39;, &#39;03&#39;, &#39;07&#39;, &#39;15&#39;, &#39;26&#39;, &#39;38&#39;, &#39;42&#39;, &#39;43&#39;, &#39;63&#39;, &#39;69&#39;, &#39;73&#39;, &#39;74&#39;],
+            &#39;Bourgogne-Franche-Comté&#39;: [&#39;21&#39;, &#39;25&#39;, &#39;39&#39;, &#39;58&#39;, &#39;70&#39;, &#39;71&#39;, &#39;89&#39;, &#39;90&#39;],
+            &#39;Bretagne&#39;: [&#39;35&#39;, &#39;22&#39;, &#39;56&#39;, &#39;29&#39;],
+            &#39;Centre-Val de Loire&#39;: [&#39;18&#39;, &#39;28&#39;, &#39;36&#39;, &#39;37&#39;, &#39;41&#39;, &#39;45&#39;],
+            &#39;Corse&#39;: [&#39;2A&#39;, &#39;2B&#39;],
+            &#39;Grand Est&#39;: [&#39;08&#39;, &#39;10&#39;, &#39;51&#39;, &#39;52&#39;, &#39;54&#39;, &#39;55&#39;, &#39;57&#39;, &#39;67&#39;, &#39;68&#39;, &#39;88&#39;],
+            &#39;Guadeloupe&#39;: [&#39;971&#39;],
+            &#39;Guyane&#39;: [&#39;973&#39;],
+            &#39;Hauts-de-France&#39;: [&#39;02&#39;, &#39;59&#39;, &#39;60&#39;, &#39;62&#39;, &#39;80&#39;],
+            &#39;Île-de-France&#39;: [&#39;75&#39;, &#39;77&#39;, &#39;78&#39;, &#39;91&#39;, &#39;92&#39;, &#39;93&#39;, &#39;94&#39;, &#39;95&#39;],
+            &#39;La Réunion&#39;: [&#39;974&#39;],
+            &#39;Martinique&#39;: [&#39;972&#39;],
+            &#39;Normandie&#39;: [&#39;14&#39;, &#39;27&#39;, &#39;50&#39;, &#39;61&#39;, &#39;76&#39;],
+            &#39;Nouvelle-Aquitaine&#39;: [&#39;16&#39;, &#39;17&#39;, &#39;19&#39;, &#39;23&#39;, &#39;24&#39;, &#39;33&#39;, &#39;40&#39;, &#39;47&#39;, &#39;64&#39;, &#39;79&#39;, &#39;86&#39;, &#39;87&#39;],
+            &#39;Occitanie&#39;: [&#39;09&#39;, &#39;11&#39;, &#39;12&#39;, &#39;30&#39;, &#39;31&#39;, &#39;32&#39;, &#39;34&#39;, &#39;46&#39;, &#39;48&#39;, &#39;65&#39;, &#39;66&#39;, &#39;81&#39;, &#39;82&#39;],
+            &#39;Pays de la Loire&#39;: [&#39;44&#39;, &#39;49&#39;, &#39;53&#39;, &#39;72&#39;, &#39;85&#39;],
+            &#39;Provence-Alpes-Côte d\&#39;Azur&#39;: [&#39;04&#39;, &#39;05&#39;, &#39;06&#39;, &#39;13&#39;, &#39;83&#39;, &#39;84&#39;],
+        }
+        for key,value in REGIONS.items():
+            if postal_code in value:
+                return key
+
+        return &#39;Undefined&#39;
+
+    def topic_postal_code(self, region=False, percentage=False):
+        &#34;&#34;&#34;
+        Analyse the importance of each topic per postal codes or region \n\n
+        `region`: to group the postal codes into region or note \n
+        `percentage`: to display in percentage or in number of occurence \n
+        &#34;&#34;&#34;
+        if &#39;authorZipCode&#39; not in self.df.columns:
+            return
+
+        if region:
+            postal_codes = TopicModelling.region_preprocessing(self.df)[&#39;region&#39;]
+        else:
+            postal_codes = TopicModelling.postal_code_preprocessing(self.df)
+
+        postal_codes_index = dict.fromkeys(postal_codes)
+        postal_codes_unique = list(postal_codes_index.keys())
+
+        if not region:
+            postal_codes_unique = [int(float(x)) for x in postal_codes_unique]
+            postal_codes_unique.sort()
+            postal_codes_unique = [str(x).zfill(2) for x in postal_codes_unique]
+
+        for key in list(postal_codes_index):
+            if not region:
+                key = str(int(float(key))).zfill(2)
+            postal_codes_index[key] = postal_codes_unique.index(key)
+
+        count_topic_postal = np.zeros((len(postal_codes_unique), self.n_topics))
+
+        for i in tqdm(range(len(self.keys))):
+            if not region:
+                count_topic_postal[postal_codes_index[str(int(float(postal_codes[i]))).zfill(2)]][self.keys[i]] += 1
+            else:
+                count_topic_postal[postal_codes_index[postal_codes[i]]][self.keys[i]] += 1
+
+        self.df_count_topic_postal = pd.DataFrame(data=count_topic_postal, index=postal_codes_unique)
+        self.df_count_topic_postal.columns = [&#39;Topic {}&#39;.format(i) for i in range(self.n_topics)]
+
+        if percentage:
+            self.df_count_topic_postal = self.df_count_topic_postal.div(self.df_count_topic_postal.sum(axis=1), axis=0)
+            self.df_count_topic_postal.fillna(0)
+
+        fig, ax = plt.subplots(figsize=(14, 10))
+        ax = sb.heatmap(self.df_count_topic_postal, cmap=&#34;YlGnBu&#34;, ax=ax)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    def get_topics_words_weigths_counts(self, n_words=50):
+        &#34;&#34;&#34;
+        Create a dataframe containing in each row : a word, its topic, the number of occurence inside the topic,
+        and its weigths inside the topics \n\n
+        `n_words`: the number of words per topic \n
+        the dataframe is accessible inside the attribute self.df_topics_words_weigths_counts \n
+        &#34;&#34;&#34;
+        self.topics_words_weigths = self.model.components_ / self.model.components_.sum(axis=1)[:, np.newaxis]
+
+        topics_words_weigths_counts = []
+
+        documents_by_topics = {}
+        words_counts_by_topic = {}
+
+        for i in range(self.n_topics):
+            documents_by_topics[i] = []
+            words_counts_by_topic[i] = {}
+
+        for i in range(len(self.documents)):
+            documents_by_topics[self.keys[i]].append(self.documents[i])
+
+        for topic, documents in documents_by_topics.items():
+            count_vectorizer = CountVectorizer()
+            try:
+                count_vectorizer.fit(documents)
+            except Exception as e:
+                print(&#34;type error: &#34; + str(e))
+                print(traceback.format_exc())
+                continue
+            words_counts_by_topic[topic] = count_vectorizer.vocabulary_
+            del count_vectorizer
+
+        for i in tqdm(range(self.topics_words_weigths.shape[0])):
+            topic_words_weigths = self.topics_words_weigths[i]
+            top_n_words_index = np.argsort(topic_words_weigths)[::-1][:n_words]
+
+            for j in tqdm(range(len(top_n_words_index))):
+                index = top_n_words_index[j]
+                temp_word_vector = np.zeros((1, self.document_term_matrix.shape[1]))
+                temp_word_vector[:, index] = 1
+                the_word = self.count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+
+                if the_word in words_counts_by_topic[i]:
+                    topics_words_weigths_counts.append(
+                        [i, the_word, topic_words_weigths[index], words_counts_by_topic[i][the_word]])
+
+        self.df_topics_words_weigths_counts = pd.DataFrame(data=topics_words_weigths_counts,
+                                                   columns=[&#39;topic_id&#39;, &#39;word&#39;, &#39;importance&#39;, &#39;word_count&#39;])
+
+    def display_wordcloud(self, topic_number):
+        &#34;&#34;&#34;
+        Display a wordcloud of the words of a topic by weight \n
+        `topic_number`: the number of the topic \n
+        &#34;&#34;&#34;
+        df_text = self.df_topics_words_weigths_counts
+        df_text = df_text.loc[df_text[&#39;topic_id&#39;] == topic_number]
+        words = df_text[&#39;word&#39;].values
+        importance = df_text[&#39;importance&#39;].values
+        number = df_text[&#39;word_count&#39;]
+
+        # Transformer en nombre de mots a avoir en fonction de l&#39;importance?
+        importance = 10000*importance
+        importance = importance.astype(int)
+
+        # Avoir la liste de mots qui va passer dans le wordcloud
+        words_total = np.copy(words)
+        for i in range(number.shape[0]):
+            w = words[i]+&#34; &#34;
+            words_total[i] = w*importance[i]
+
+        # Transformer en string
+        text = &#39;&#39;.join(words_total)
+
+        # Enlever le char &#39;, facultatif
+        text.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+        mask = np.array((Image.open(&#39;cloud_mask2.png&#39;)))
+
+        # Dessiner le nuage de mots
+        wordcloud = wc.WordCloud(background_color=&#34;white&#34;, collocations=False, mask=mask).generate(str(text))
+
+        fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+        ax.imshow(wordcloud, interpolation=&#34;bilinear&#34;)
+        ax.set_axis_off()
+
+        plt.title(&#34;Word Cloud by weight of Topic &#34; + str(topic_number))
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+    def display_topics_words_weights_counts(self, n_words=15):
+        &#34;&#34;&#34;
+        Plot Word Count and Weights of Topic Keywords \n
+        &#34;&#34;&#34;
+        df = self.df_topics_words_weigths_counts
+        cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+
+        for i in range(self.n_topics):
+
+            data = df.loc[df.topic_id == i, :][:n_words]
+
+            if data.empty:
+                continue
+
+            fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+
+            ax.bar(x=&#39;word&#39;, height=&#34;word_count&#34;, data=data, color=cols[i%len(cols)], width=0.5,
+                   alpha=0.3,
+                   label=&#39;Word Count&#39;)
+            ax_twin = ax.twinx()
+            ax_twin.bar(x=&#39;word&#39;, height=&#34;importance&#34;, data=data, color=cols[i%len(cols)], width=0.2,
+                        label=&#39;Weights&#39;)
+            ax.set_ylabel(&#39;Word Count&#39;, color=cols[i%len(cols)])
+            ax.set_title(&#39;Topic: &#39; + str(i), color=cols[i%len(cols)], fontsize=16)
+            ax.tick_params(axis=&#39;y&#39;, left=False)
+            ax.set_xticklabels(data[&#39;word&#39;], rotation=30, horizontalalignment=&#39;right&#39;)
+            ax.legend(loc=&#39;upper left&#39;)
+            ax_twin.legend(loc=&#39;upper right&#39;)
+
+            fig.tight_layout(w_pad=2)
+            fig.suptitle(&#39;Word Count and Importance of Topic Keywords&#39;, fontsize=22, y=1.05)
+
+            if self.report:
+                self.pdf.savefig(fig)
+
+            if self._display:
+                plt.show()
+            else:
+                plt.close(fig)
+
+            self.display_wordcloud(i)
+
+    def topic_correlation(self, topic_matrix):
+        &#34;&#34;&#34;
+        Analyse the correlation between topic \n \n
+        `topic_matrix`: self.topic_matrix \n
+        &#34;&#34;&#34;
+        data = pd.DataFrame(data=topic_matrix)
+        corr = data.corr()
+        fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+        cax = ax.matshow(corr, cmap=&#39;coolwarm&#39;, vmin=-1, vmax=1)
+        fig.colorbar(cax)
+        ticks = np.arange(0, len(data.columns), 1)
+        ax.set_xticks(ticks)
+        plt.xticks(rotation=90)
+        ax.set_yticks(ticks)
+        ax.set_xticklabels(data.columns)
+        ax.set_yticklabels(data.columns)
+
+        fig.suptitle(&#39;Topic Correlation&#39;)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+        # fig = plt.figure(figsize=(16,8))
+        # fig.subplots_adjust(hspace=0.4, wspace=0.4)
+        #
+        # for i in range(1, 11):
+        #     ax = fig.add_subplot(1, 10, i)
+        #     resh_data = data.loc[list(range(30 * i, 30 * (i + 1))), :]
+        #     cax = ax.matshow(resh_data, cmap=&#39;coolwarm&#39;, vmin=0, vmax=1)
+        #     ticks = np.arange(0, len(resh_data.columns), 1)
+        #     ax.set_xticks(ticks)
+        #     plt.xticks(rotation=90)
+        #     ax.set_xticklabels(resh_data.columns)
+        #     fig.colorbar(cax)
+        #
+        # plt.tight_layout()
+        #
+        # if self.report:
+        #     self.pdf.savefig(fig)
+        #
+        # if self._display:
+        #     plt.show()
+        # else:
+        #     plt.close(fig)
+        #
+        # matrix = topic_matrix.copy()
+        #
+        # nuanced_data = [0, 0, 0, 0, 0, 0, 0, 0]
+        # nuanced_data = np.array(nuanced_data)
+        # for i in range(len(matrix)):
+        #     j = 0
+        #     while j &lt; 8 :
+        #         if matrix[i][j] &lt; 0.75 :
+        #             j += 1
+        #         else:
+        #             j = 10
+        #     if j == 8 :
+        #         nuanced_data = np.vstack((nuanced_data, matrix[i]))
+        #
+        # n_removed_answer = data.shape[0] - nuanced_data.shape[0]
+        #
+        # print(str(n_removed_answer) + &#34; answers have been removed to keep only the one allowing inference&#34;)
+        # self.logger.info(str(n_removed_answer) + &#34; answers have been removed to keep only the one allowing inference&#34;)
+        #
+        # nuanced_data = pd.DataFrame(data=nuanced_data)
+        #
+        # fig = plt.figure(figsize=(16,8))
+        # fig.subplots_adjust(hspace=0.4, wspace=0.4)
+        #
+        # for i in range(1, 11):
+        #     ax = fig.add_subplot(1, 10, i)
+        #     resh_data = nuanced_data.loc[list(range(30 * (i+7000), 30 * (i + 7000+ 1))), :]
+        #     cax = ax.matshow(resh_data, cmap=&#39;coolwarm&#39;, vmin=0, vmax=1)
+        #     ticks = np.arange(0, len(resh_data.columns), 1)
+        #     ax.set_xticks(ticks)
+        #     plt.xticks(rotation=90)
+        #     ax.set_xticklabels(resh_data.columns)
+        #     fig.colorbar(cax)
+        #
+        # plt.tight_layout()
+        #
+        # if self.report:
+        #     self.pdf.savefig(fig)
+        #
+        # if self._display:
+        #     plt.show()
+        # else:
+        #     plt.close(fig)
+
+    def summary(self, topic_matrix):
+        &#34;&#34;&#34;
+        Run the topic modelling analyse of the topic_matrix given in parameters \n\n
+        `topic_matrix`: the topic matrix of the model \n
+        &#34;&#34;&#34;
+        self.get_keys(topic_matrix)
+
+        self.keys_to_counts()
+
+        print(&#39;Computing top words&#39;)
+        self.logger.info(&#39;Computing top words&#39;)
+        self.get_top_n_words(30, self.keys, self.document_term_matrix, self.count_vectorizer)
+
+        print(&#39;Displaying top words&#39;)
+        self.logger.info(&#39;Displaying top words&#39;)
+        self.display_top_n_word()
+
+        print(&#39;Computing topics per postal code by counts&#39;)
+        self.logger.info(&#39;Computing topics per postal code by counts&#39;)
+        self.topic_postal_code(region=False, percentage=False)
+
+        print(&#39;Computing topics per postal code by percentage&#39;)
+        self.logger.info(&#39;Computing topics per postal code by percentage&#39;)
+        self.topic_postal_code(region=False, percentage=True)
+
+        self.topic_postal_code(region=True, percentage=False)
+
+        self.topic_postal_code(region=True, percentage=True)
+
+        print(&#39;Computing words weights per topics&#39;)
+        self.logger.info(&#39;Computing words weigths per topics&#39;)
+        self.get_topics_words_weigths_counts(n_words=50)
+
+        print(&#39;Displaying words weigths per topics&#39;)
+        self.logger.info(&#39;Displaying words weigths per topics&#39;)
+        self.display_topics_words_weights_counts(n_words=20)
+
+        print(&#39;Topic Correlation&#39;)
+        self.logger.info(&#39;Topic Correlation&#39;)
+        self.topic_correlation(topic_matrix)
+
+        if self.report:
+            self.pdf.close()
+
+        if self._cluster:
+            print(&#39;Dimensional Reduction&#39;)
+            self.logger.info(&#39;Dimensional Reduction&#39;)
+            tsne_vectors = self.dimensional_reduction_tsne(topic_matrix)
+
+            print(&#39;Get Mean Topic Vectors&#39;)
+            self.logger.info(&#39;Get Mean Topic Vectors&#39;)
+            self.get_mean_topic_vectors(self.keys, tsne_vectors)
+
+            print(&#39;Displaying Cluster&#39;)
+            self.logger.info(&#39;Displaying Cluster&#39;)
+            self.display_cluster(tsne_vectors)
+
+        print(&#39;File Analysed !&#39;)
+        self.logger.info(&#39;File Analysed !&#39;)
+
+        self.logger.removeHandler(self.logger_file_handler)
+        del self.logger, self.logger_file_handler</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="TopicModelling.Topic_Modelling_LDA.LDA" href="Topic_Modelling_LDA.html#TopicModelling.Topic_Modelling_LDA.LDA">LDA</a></li>
+<li><a title="TopicModelling.Topic_Modelling_LSA.LSA" href="Topic_Modelling_LSA.html#TopicModelling.Topic_Modelling_LSA.LSA">LSA</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.dimensional_reduction_tsne"><code class="name flex">
+<span>def <span class="ident">dimensional_reduction_tsne</span></span>(<span>topic_matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Reduce the dimension of the topic matrix to 2D in order to display the cluster of a graph </p>
+<p><code>topic_matrix</code>: a topic matrix </p>
+<p><code>return</code> a 2D vector of the topic matrix</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def dimensional_reduction_tsne(topic_matrix):
+    &#34;&#34;&#34;
+    Reduce the dimension of the topic matrix to 2D in order to display the cluster of a graph \n\n
+    `topic_matrix`: a topic matrix \n
+    `return` a 2D vector of the topic matrix \n
+    &#34;&#34;&#34;
+    tsne_model = TSNE(n_components=2, perplexity=50, learning_rate=100,
+                      n_iter=2000, verbose=1, random_state=0, angle=0.75)
+    tsne_vectors = tsne_model.fit_transform(topic_matrix)
+    return tsne_vectors</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.find_region"><code class="name flex">
+<span>def <span class="ident">find_region</span></span>(<span>postal_code)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find the region of a postal code </p>
+<p><code>postal_code</code>: a postal code with 2 digits </p>
+<p><code>return</code> the region of the postal code</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def find_region(postal_code):
+    &#34;&#34;&#34;
+    Find the region of a postal code \n\n
+    `postal_code`: a postal code with 2 digits \n
+    `return` the region of the postal code \n
+    &#34;&#34;&#34;
+    REGIONS = {
+        &#39;Auvergne-Rhône-Alpes&#39;: [&#39;01&#39;, &#39;03&#39;, &#39;07&#39;, &#39;15&#39;, &#39;26&#39;, &#39;38&#39;, &#39;42&#39;, &#39;43&#39;, &#39;63&#39;, &#39;69&#39;, &#39;73&#39;, &#39;74&#39;],
+        &#39;Bourgogne-Franche-Comté&#39;: [&#39;21&#39;, &#39;25&#39;, &#39;39&#39;, &#39;58&#39;, &#39;70&#39;, &#39;71&#39;, &#39;89&#39;, &#39;90&#39;],
+        &#39;Bretagne&#39;: [&#39;35&#39;, &#39;22&#39;, &#39;56&#39;, &#39;29&#39;],
+        &#39;Centre-Val de Loire&#39;: [&#39;18&#39;, &#39;28&#39;, &#39;36&#39;, &#39;37&#39;, &#39;41&#39;, &#39;45&#39;],
+        &#39;Corse&#39;: [&#39;2A&#39;, &#39;2B&#39;],
+        &#39;Grand Est&#39;: [&#39;08&#39;, &#39;10&#39;, &#39;51&#39;, &#39;52&#39;, &#39;54&#39;, &#39;55&#39;, &#39;57&#39;, &#39;67&#39;, &#39;68&#39;, &#39;88&#39;],
+        &#39;Guadeloupe&#39;: [&#39;971&#39;],
+        &#39;Guyane&#39;: [&#39;973&#39;],
+        &#39;Hauts-de-France&#39;: [&#39;02&#39;, &#39;59&#39;, &#39;60&#39;, &#39;62&#39;, &#39;80&#39;],
+        &#39;Île-de-France&#39;: [&#39;75&#39;, &#39;77&#39;, &#39;78&#39;, &#39;91&#39;, &#39;92&#39;, &#39;93&#39;, &#39;94&#39;, &#39;95&#39;],
+        &#39;La Réunion&#39;: [&#39;974&#39;],
+        &#39;Martinique&#39;: [&#39;972&#39;],
+        &#39;Normandie&#39;: [&#39;14&#39;, &#39;27&#39;, &#39;50&#39;, &#39;61&#39;, &#39;76&#39;],
+        &#39;Nouvelle-Aquitaine&#39;: [&#39;16&#39;, &#39;17&#39;, &#39;19&#39;, &#39;23&#39;, &#39;24&#39;, &#39;33&#39;, &#39;40&#39;, &#39;47&#39;, &#39;64&#39;, &#39;79&#39;, &#39;86&#39;, &#39;87&#39;],
+        &#39;Occitanie&#39;: [&#39;09&#39;, &#39;11&#39;, &#39;12&#39;, &#39;30&#39;, &#39;31&#39;, &#39;32&#39;, &#39;34&#39;, &#39;46&#39;, &#39;48&#39;, &#39;65&#39;, &#39;66&#39;, &#39;81&#39;, &#39;82&#39;],
+        &#39;Pays de la Loire&#39;: [&#39;44&#39;, &#39;49&#39;, &#39;53&#39;, &#39;72&#39;, &#39;85&#39;],
+        &#39;Provence-Alpes-Côte d\&#39;Azur&#39;: [&#39;04&#39;, &#39;05&#39;, &#39;06&#39;, &#39;13&#39;, &#39;83&#39;, &#39;84&#39;],
+    }
+    for key,value in REGIONS.items():
+        if postal_code in value:
+            return key
+
+    return &#39;Undefined&#39;</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.initiate_documents"><code class="name flex">
+<span>def <span class="ident">initiate_documents</span></span>(<span>df, columns)</span>
+</code></dt>
+<dd>
+<section class="desc"><p><code>df</code>: the dataframe </p>
+<p><code>columns</code>: the columns to add </p>
+<p><code>return</code> a list of documents</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def initiate_documents(df, columns):
+    &#34;&#34;&#34;
+    `df`: the dataframe \n
+    `columns`: the columns to add \n
+    `return` a list of documents \n
+    &#34;&#34;&#34;
+    # initiating the list of documents
+    # if multiple columns, the columns are concatenated
+
+    all_columns = df.columns.tolist()
+    if type(columns) is not list:
+        raise ValueError(&#39;columns must be a list!&#39;)
+    if columns == [&#39;all&#39;]:
+        columns_to_load = [colname for colname in all_columns if colname == &#39;title&#39; or colname.startswith(&#39;QUXV&#39;)]
+    else:
+        columns_to_load = columns
+    for col in columns_to_load:
+        if col not in all_columns:
+            warnings.warn(col + &#39; is not in the documents --&gt; ignored&#39;)
+            columns_to_load.remove(col)
+    documents = df[columns_to_load[0]].fillna(&#39;&#39;).map(str)
+    for i in range(1, len(columns_to_load)):
+        documents = documents + &#39; &#39; + df[columns_to_load[i]].fillna(&#39;&#39;).map(str)
+    return documents</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.postal_code_preprocessing"><code class="name flex">
+<span>def <span class="ident">postal_code_preprocessing</span></span>(<span>df, col=&#39;authorZipCode&#39;)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Preprocessing of the column postal code to keep only the first 2 digits </p>
+<p><code>df</code>: the dataframe containing a columns of postal codes </p>
+<p><code>col</code>: the name of the column containing the postal codes </p>
+<p><code>return</code> a series containing the postal codes</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def postal_code_preprocessing(df, col=&#39;authorZipCode&#39;):
+    &#34;&#34;&#34;
+    Preprocessing of the column postal code to keep only the first 2 digits \n
+    `df`: the dataframe containing a columns of postal codes \n
+    `col`: the name of the column containing the postal codes \n
+    `return` a series containing the postal codes \n
+    &#34;&#34;&#34;
+    postal_codes = df[col].fillna(0).astype(str)
+    postal_codes = postal_codes.apply(lambda x: &#39;0&#39; + x[:1] if (len(x) == 1 or x[1] == &#39;.&#39;) else (
+        x if (len(x) &lt;= 2 or x[2] == &#39;.&#39;) else (x[:3] if (x[:2] == &#39;97&#39; or x[:3] == &#39;999&#39;) else x[:2])))
+    return postal_codes</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.region_preprocessing"><code class="name flex">
+<span>def <span class="ident">region_preprocessing</span></span>(<span>df, col=&#39;authorZipCode&#39;)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Convert the postal codes to regions of France </p>
+<p><code>df</code>: the dataframe containing a columns of postal codes </p>
+<p><code>col</code>: the name of the column containing the postal codes
+</p>
+<p><code>return</code> the original dataframe with a new column 'region'</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">@staticmethod
+def region_preprocessing(df, col=&#39;authorZipCode&#39;):
+    &#34;&#34;&#34;
+    Convert the postal codes to regions of France \n\n
+    `df`: the dataframe containing a columns of postal codes \n
+    `col`: the name of the column containing the postal codes  \n
+    `return` the original dataframe with a new column &#39;region&#39; \n
+    &#34;&#34;&#34;
+    postal_codes = TopicModelling.postal_code_preprocessing(df)
+    regions = postal_codes.apply(TopicModelling.find_region)
+    df[&#39;region&#39;] = regions
+    return df</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, folder, filename, columns, n_topics, sample_only=True, display=False, report=False, cluster=False, inference=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initialize the Topic Modelling object </p>
+<p><code>folder</code>: the path of the folder containing the data </p>
+<p><code>filename</code>: the name of the file to analyse </p>
+<p><code>columns</code>: a list with the name of the column to analyse inside the file, ['all'] to include all the dataset </p>
+<p><code>n_topics</code>: the number of topics to extract </p>
+<p><code>sample_only</code>: to analyze only a sample of the dataset in case of lack of computational power (limits to
+10K observations) </p>
+<p><code>display</code>: to display each plot in a new windows </p>
+<p><code>report</code>: to generate a pdf report contaning all the output and graphs of the topic modelling analysis </p>
+<dl>
+<dt><strong><code>NOTE</code></strong> :&ensp;<code>The</code> <code>reports</code> <code>are</code> <code>located</code> <code>in</code> <code>the</code> <code>folder</code> <code>containing</code> <code>the</code> <code>data</code> <code>inside</code> <code>the</code> <code>folder</code> <code>"grand_debat_report"</code></dt>
+<dd>&nbsp;</dd>
+</dl>
+<p><code>cluster</code>: to create a cluster of the topics &ndash;&gt; Computer Intensive and very long </p>
+<p><code>inference</code>: used to analyse the dataset of all users</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, folder, filename, columns, n_topics, sample_only=True, display=False, report=False,
+             cluster=False, inference=False):
+    &#34;&#34;&#34;
+    Initialize the Topic Modelling object \n
+
+    `folder`: the path of the folder containing the data \n
+    `filename`: the name of the file to analyse \n
+    `columns`: a list with the name of the column to analyse inside the file, [&#39;all&#39;] to include all the dataset \n
+    `n_topics`: the number of topics to extract \n
+    `sample_only`: to analyze only a sample of the dataset in case of lack of computational power (limits to
+    10K observations) \n
+    `display`: to display each plot in a new windows \n
+    `report`: to generate a pdf report contaning all the output and graphs of the topic modelling analysis \n
+    NOTE : The reports are located in the folder containing the data inside the folder &#34;grand_debat_report&#34; \n
+    `cluster`: to create a cluster of the topics --&gt; Computer Intensive and very long \n
+    `inference`: used to analyse the dataset of all users \n
+    &#34;&#34;&#34;
+
+    self.folder = folder
+    self.filename = filename
+
+    self.inference = inference
+
+    now = datetime.datetime.now().strftime(&#34;%Y-%m-%d_%H-%M-%S_&#34;)
+
+    self.logname = now + filename[:len(filename)-4]
+
+    if self.inference:
+        self.columns = [&#39;documents&#39;]
+        self.logname += &#39;_inference&#39;
+
+    else:
+        self.columns = columns
+
+        if self.columns == [&#39;all&#39;]:
+            self.logname += &#39;_all&#39;
+        else:
+            all_columns = list(pd.read_csv(os.path.join(self.folder, self.filename), nrows=1).columns)
+            col_indices = &#34;&#34;
+            for colname in self.columns:
+                if colname in all_columns:
+                    self.logname += &#34;_&#34; + str(all_columns.index(colname))
+                else:
+                    warnings.warn(colname + &#34; not in the dataset --&gt; Ignoring&#34;)
+                    self.columns.remove(colname)
+
+    if not os.path.isdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;)):
+        os.mkdir(os.path.join(self.folder, &#34;grand_debat_reports&#34;))
+
+    self.logname = os.path.join(self.folder, &#34;grand_debat_reports&#34;, self.logname + &#34;.log&#34;)
+
+    self.logger = logging.getLogger()
+    self.logger.setLevel(logging.INFO)
+
+    self.logger_file_handler = logging.FileHandler(filename=self.logname)
+    self.logger_file_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        fmt=&#39;%(asctime)s-%(msecs)d %(name)s %(levelname)s %(message)s \n&#39;,
+        datefmt=&#39;%Y-%m-%d %H:%M:%S&#39;
+    )
+    self.logger_file_handler.setFormatter(formatter)
+    self.logger.addHandler(self.logger_file_handler)
+
+    self.report = report
+    if self.report:
+        report_name = self.logname[:len(self.logname)-4] + &#34;_report.pdf&#34;
+        self.pdf = PdfPages(report_name)
+
+    if not os.path.isfile(os.path.join(folder, &#34;clean_&#34; + filename)):
+        print(&#34;Cleaning file&#34;)
+        self.logger.info(&#34;Cleaning file&#34;)
+        if filename == &#34;all_user_df.csv&#34;:
+            dataCleaner = DataCleaner(folder, &#39;all&#39;, force=False, user=True, lemma=False)
+        else:
+            dataCleaner = DataCleaner(folder, filename, force=True, user=False, lemma=False)
+        dataCleaner.clean()
+        print(&#34;File Cleaned&#34;)
+        self.logger.info(&#34;File Cleaned&#34;)
+
+    self.sample_only = sample_only
+
+    if self.sample_only:
+        self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename), nrows=1000)
+    else:
+        self.df = pd.read_csv(os.path.join(folder, &#34;clean_&#34; + filename))
+
+    self.documents = self.initiate_documents(self.df, self.columns)
+
+    if (self.documents is None) or self.documents.empty is True:
+        raise ValueError(&#39;Data Not Loaded, check self.documents&#39;)
+
+    print(&#39;Data Loaded : %d answers to analyse in file : %s&#39; % (len(self.documents), filename))
+    self.logger.info(&#34;Data Loaded : %d answers to analyse in file : %s&#34; % (len(self.documents), filename))
+
+    print(&#39;Analysing column : &#39; + str(columns))
+    self.logger.info(&#39;Analysing column : &#39; + str(columns))
+
+    self.n_topics = n_topics
+
+    self._display = display
+    self._cluster = cluster
+
+    if not self._display:
+        plt.ioff()
+
+    print(&#39;Preprocessing the data&#39;)
+    self.logger.info(&#39;Preprocessing the data&#39;)
+    self.preprocessing()
+    print(&#39;Preprocessing Done&#39;)
+    self.logger.info(&#34;Preprocessing Done&#34;)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.display_cluster"><code class="name flex">
+<span>def <span class="ident">display_cluster</span></span>(<span>self, tsne_vectors)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def display_cluster(self, tsne_vectors):
+    # output_notebook()
+    colormap = np.array([
+        &#34;#1f77b4&#34;, &#34;#aec7e8&#34;, &#34;#ff7f0e&#34;, &#34;#ffbb78&#34;, &#34;#2ca02c&#34;,
+        &#34;#98df8a&#34;, &#34;#d62728&#34;, &#34;#ff9896&#34;, &#34;#9467bd&#34;, &#34;#c5b0d5&#34;,
+        &#34;#8c564b&#34;, &#34;#c49c94&#34;, &#34;#e377c2&#34;, &#34;#f7b6d2&#34;, &#34;#7f7f7f&#34;,
+        &#34;#c7c7c7&#34;, &#34;#bcbd22&#34;, &#34;#dbdb8d&#34;, &#34;#17becf&#34;, &#34;#9edae5&#34;])
+    colormap = colormap[:self.n_topics]
+
+    plot = figure(title=&#34;t-SNE Clustering of {} LSA Topics&#34;.format(self.n_topics), plot_width=1000, plot_height=1000)
+    plot.scatter(x=tsne_vectors[:, 0], y=tsne_vectors[:, 1], color=colormap[self.keys])
+
+    for t in range(self.n_topics):
+        label = Label(x=self.mean_topic_vectors[t][0], y=self.mean_topic_vectors[t][1],
+                      text=&#39; &#39;.join(self.top_words[t].split(&#39; &#39;)[0:2]),
+                      text_color=colormap[t])
+        plot.add_layout(label)
+
+    if self.report:
+        filename = self.logname[:len(self.logname)-4] + &#34;_cluster.html&#34;
+        output_file(filename)
+        save(plot)
+        print(&#34;Cluster saved to html&#34;)
+        self.logger.info(&#34;Cluster saved to html&#34;)
+    if self._display:
+        show(plot)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.display_top_n_word"><code class="name flex">
+<span>def <span class="ident">display_top_n_word</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Display a bar chart with the number of documents for each topic</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def display_top_n_word(self):
+    &#34;&#34;&#34;
+    Display a bar chart with the number of documents for each topic \n
+    &#34;&#34;&#34;
+    for i in range(len(self.top_words)):
+        print(&#34;Topic {}: &#34;.format(i), self.top_words[i])
+        self.logger.info(&#34;Topic %d: %s&#34; % (i, self.top_words[i]))
+
+    labels = [&#39;Topic {}: \n&#39;.format(i) + &#39; &#39;.join(self.top_words[i].split(&#39; &#39;)[0:2]) for i in self.categories]
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.bar(self.categories, self.counts)
+    ax.set_xticks(self.categories)
+    ax.set_xticklabels(labels)
+    ax.set_title(&#39;Topic Category Counts&#39;)
+
+    if self.report:
+        self.pdf.savefig(fig)
+
+    if self._display:
+        plt.show()
+    else:
+        plt.close(fig)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.display_topics_words_weights_counts"><code class="name flex">
+<span>def <span class="ident">display_topics_words_weights_counts</span></span>(<span>self, n_words=15)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Plot Word Count and Weights of Topic Keywords</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def display_topics_words_weights_counts(self, n_words=15):
+    &#34;&#34;&#34;
+    Plot Word Count and Weights of Topic Keywords \n
+    &#34;&#34;&#34;
+    df = self.df_topics_words_weigths_counts
+    cols = [color for name, color in mcolors.TABLEAU_COLORS.items()]
+
+    for i in range(self.n_topics):
+
+        data = df.loc[df.topic_id == i, :][:n_words]
+
+        if data.empty:
+            continue
+
+        fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+
+        ax.bar(x=&#39;word&#39;, height=&#34;word_count&#34;, data=data, color=cols[i%len(cols)], width=0.5,
+               alpha=0.3,
+               label=&#39;Word Count&#39;)
+        ax_twin = ax.twinx()
+        ax_twin.bar(x=&#39;word&#39;, height=&#34;importance&#34;, data=data, color=cols[i%len(cols)], width=0.2,
+                    label=&#39;Weights&#39;)
+        ax.set_ylabel(&#39;Word Count&#39;, color=cols[i%len(cols)])
+        ax.set_title(&#39;Topic: &#39; + str(i), color=cols[i%len(cols)], fontsize=16)
+        ax.tick_params(axis=&#39;y&#39;, left=False)
+        ax.set_xticklabels(data[&#39;word&#39;], rotation=30, horizontalalignment=&#39;right&#39;)
+        ax.legend(loc=&#39;upper left&#39;)
+        ax_twin.legend(loc=&#39;upper right&#39;)
+
+        fig.tight_layout(w_pad=2)
+        fig.suptitle(&#39;Word Count and Importance of Topic Keywords&#39;, fontsize=22, y=1.05)
+
+        if self.report:
+            self.pdf.savefig(fig)
+
+        if self._display:
+            plt.show()
+        else:
+            plt.close(fig)
+
+        self.display_wordcloud(i)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.display_wordcloud"><code class="name flex">
+<span>def <span class="ident">display_wordcloud</span></span>(<span>self, topic_number)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Display a wordcloud of the words of a topic by weight </p>
+<p><code>topic_number</code>: the number of the topic</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def display_wordcloud(self, topic_number):
+    &#34;&#34;&#34;
+    Display a wordcloud of the words of a topic by weight \n
+    `topic_number`: the number of the topic \n
+    &#34;&#34;&#34;
+    df_text = self.df_topics_words_weigths_counts
+    df_text = df_text.loc[df_text[&#39;topic_id&#39;] == topic_number]
+    words = df_text[&#39;word&#39;].values
+    importance = df_text[&#39;importance&#39;].values
+    number = df_text[&#39;word_count&#39;]
+
+    # Transformer en nombre de mots a avoir en fonction de l&#39;importance?
+    importance = 10000*importance
+    importance = importance.astype(int)
+
+    # Avoir la liste de mots qui va passer dans le wordcloud
+    words_total = np.copy(words)
+    for i in range(number.shape[0]):
+        w = words[i]+&#34; &#34;
+        words_total[i] = w*importance[i]
+
+    # Transformer en string
+    text = &#39;&#39;.join(words_total)
+
+    # Enlever le char &#39;, facultatif
+    text.replace(&#34;&#39;&#34;, &#34;&#34;)
+
+    mask = np.array((Image.open(&#39;cloud_mask2.png&#39;)))
+
+    # Dessiner le nuage de mots
+    wordcloud = wc.WordCloud(background_color=&#34;white&#34;, collocations=False, mask=mask).generate(str(text))
+
+    fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+    ax.imshow(wordcloud, interpolation=&#34;bilinear&#34;)
+    ax.set_axis_off()
+
+    plt.title(&#34;Word Cloud by weight of Topic &#34; + str(topic_number))
+
+    if self.report:
+        self.pdf.savefig(fig)
+
+    if self._display:
+        plt.show()
+    else:
+        plt.close(fig)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.get_keys"><code class="name flex">
+<span>def <span class="ident">get_keys</span></span>(<span>self, topic_matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>returns an integer list of predicted topic categories for a given topic matrix </p>
+<p>For example : topic_matrix[0] = [0.04166669, 0.04166669, 0.04166669, 0.70833314, 0.04166669,
+0.0416667 , 0.0416667 , 0.0416667 ] means that the first document belongs to the topic 3 with the highest probability </p>
+<p><code>topic_matrix</code>: a topic_matrix </p>
+<p><code>return</code> an integer list</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_keys(self, topic_matrix):
+    &#34;&#34;&#34;
+    returns an integer list of predicted topic categories for a given topic matrix \n
+    For example : topic_matrix[0] = [0.04166669, 0.04166669, 0.04166669, 0.70833314, 0.04166669,
+   0.0416667 , 0.0416667 , 0.0416667 ] means that the first document belongs to the topic 3 with the highest probability \n
+
+    `topic_matrix`: a topic_matrix \n
+    `return` an integer list \n
+    &#34;&#34;&#34;
+    keys = []
+    for i in range(topic_matrix.shape[0]):
+        keys.append(topic_matrix[i].argmax())
+
+    self.keys = keys</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.get_mean_topic_vectors"><code class="name flex">
+<span>def <span class="ident">get_mean_topic_vectors</span></span>(<span>self, keys, two_dim_vectors)</span>
+</code></dt>
+<dd>
+<section class="desc"><p><code>keys</code>: a list of the topics of each documents</p>
+<p><code>two_dim_vectors</code>: a two dimensional vector reduced by tsne </p>
+<p><code>return</code> a list of centroid vectors from each predicted topic category</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_mean_topic_vectors(self, keys, two_dim_vectors):
+    &#34;&#34;&#34;
+    `keys`: a list of the topics of each documents\n
+    `two_dim_vectors`: a two dimensional vector reduced by tsne \n
+    `return` a list of centroid vectors from each predicted topic category \n
+    &#34;&#34;&#34;
+    mean_topic_vectors = []
+    for t in range(self.n_topics):
+        articles_in_that_topic = []
+        for i in range(len(keys)):
+            if keys[i] == t:
+                articles_in_that_topic.append(two_dim_vectors[i])
+
+        articles_in_that_topic = np.vstack(articles_in_that_topic)
+        mean_article_in_that_topic = np.mean(articles_in_that_topic, axis=0)
+        mean_topic_vectors.append(mean_article_in_that_topic)
+    self.mean_topic_vectors = mean_topic_vectors
+    return mean_topic_vectors</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.get_top_n_words"><code class="name flex">
+<span>def <span class="ident">get_top_n_words</span></span>(<span>self, n, keys, document_term_matrix, count_vectorizer)</span>
+</code></dt>
+<dd>
+<section class="desc"><p><code>n</code>: number of top words to compute for each topic </p>
+<p><code>keys</code>:
+an integer list obtaining with the method get_keys </p>
+<p><code>document_term_matrix</code>: a document/term matrix obtaing with a CountVectorizer </p>
+<p><code>count_vectorizer</code>: a CountVectorizer object used to create the document term matrix </p>
+<p><code>return</code> returns a list of n_topic strings, where each string contains the n most common
+words in a predicted category, in order</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_top_n_words(self, n, keys, document_term_matrix, count_vectorizer):
+    &#34;&#34;&#34;
+    `n`: number of top words to compute for each topic \n
+    `keys`:  an integer list obtaining with the method get_keys \n
+    `document_term_matrix`: a document/term matrix obtaing with a CountVectorizer \n
+    `count_vectorizer`: a CountVectorizer object used to create the document term matrix \n
+    `return` returns a list of n_topic strings, where each string contains the n most common
+    words in a predicted category, in order \n
+    &#34;&#34;&#34;
+    top_word_indices = []
+    for topic in range(self.n_topics):
+        temp_vector_sum = 0
+        found = False
+        for i in range(len(keys)):
+            if keys[i] == topic:
+                temp_vector_sum += document_term_matrix[i]
+                found = True
+        if found:
+            temp_vector_sum = temp_vector_sum.toarray()
+            top_n_word_indices = np.flip(np.argsort(temp_vector_sum)[0][-n:], 0)
+            top_word_indices.append(top_n_word_indices)
+        else:
+            top_word_indices.append([])
+    self.top_words = []
+    for topic in top_word_indices:
+        topic_words = []
+        for index in topic:
+            temp_word_vector = np.zeros((1, document_term_matrix.shape[1]))
+            temp_word_vector[:, index] = 1
+            the_word = count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+            topic_words.append(the_word.encode(&#39;ascii&#39;).decode(&#39;utf-8&#39;))
+        self.top_words.append(&#34; &#34;.join(topic_words))</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.get_topics_words_weigths_counts"><code class="name flex">
+<span>def <span class="ident">get_topics_words_weigths_counts</span></span>(<span>self, n_words=50)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Create a dataframe containing in each row : a word, its topic, the number of occurence inside the topic,
+and its weigths inside the topics </p>
+<p><code>n_words</code>: the number of words per topic </p>
+<p>the dataframe is accessible inside the attribute self.df_topics_words_weigths_counts</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def get_topics_words_weigths_counts(self, n_words=50):
+    &#34;&#34;&#34;
+    Create a dataframe containing in each row : a word, its topic, the number of occurence inside the topic,
+    and its weigths inside the topics \n\n
+    `n_words`: the number of words per topic \n
+    the dataframe is accessible inside the attribute self.df_topics_words_weigths_counts \n
+    &#34;&#34;&#34;
+    self.topics_words_weigths = self.model.components_ / self.model.components_.sum(axis=1)[:, np.newaxis]
+
+    topics_words_weigths_counts = []
+
+    documents_by_topics = {}
+    words_counts_by_topic = {}
+
+    for i in range(self.n_topics):
+        documents_by_topics[i] = []
+        words_counts_by_topic[i] = {}
+
+    for i in range(len(self.documents)):
+        documents_by_topics[self.keys[i]].append(self.documents[i])
+
+    for topic, documents in documents_by_topics.items():
+        count_vectorizer = CountVectorizer()
+        try:
+            count_vectorizer.fit(documents)
+        except Exception as e:
+            print(&#34;type error: &#34; + str(e))
+            print(traceback.format_exc())
+            continue
+        words_counts_by_topic[topic] = count_vectorizer.vocabulary_
+        del count_vectorizer
+
+    for i in tqdm(range(self.topics_words_weigths.shape[0])):
+        topic_words_weigths = self.topics_words_weigths[i]
+        top_n_words_index = np.argsort(topic_words_weigths)[::-1][:n_words]
+
+        for j in tqdm(range(len(top_n_words_index))):
+            index = top_n_words_index[j]
+            temp_word_vector = np.zeros((1, self.document_term_matrix.shape[1]))
+            temp_word_vector[:, index] = 1
+            the_word = self.count_vectorizer.inverse_transform(temp_word_vector)[0][0]
+
+            if the_word in words_counts_by_topic[i]:
+                topics_words_weigths_counts.append(
+                    [i, the_word, topic_words_weigths[index], words_counts_by_topic[i][the_word]])
+
+    self.df_topics_words_weigths_counts = pd.DataFrame(data=topics_words_weigths_counts,
+                                               columns=[&#39;topic_id&#39;, &#39;word&#39;, &#39;importance&#39;, &#39;word_count&#39;])</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.keys_to_counts"><code class="name flex">
+<span>def <span class="ident">keys_to_counts</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>the get_keys method has to be executed at least once to run this method </p>
+<p><code>return</code> returns a tuple of topic categories and their accompanying magnitudes for the list of keys</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def keys_to_counts(self):
+    &#34;&#34;&#34;
+    the get_keys method has to be executed at least once to run this method \n
+
+    `return` returns a tuple of topic categories and their accompanying magnitudes for the list of keys \n
+    &#34;&#34;&#34;
+    count_pairs = Counter(self.keys).items()
+    self.categories = [pair[0] for pair in count_pairs]
+    self.counts = [pair[1] for pair in count_pairs]</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.preprocessing"><code class="name flex">
+<span>def <span class="ident">preprocessing</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initiate the document term matrix</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def preprocessing(self):
+    &#34;&#34;&#34;
+    Initiate the document term matrix
+    &#34;&#34;&#34;
+    self.count_vectorizer = CountVectorizer(stop_words=&#39;english&#39;)
+    self.document_term_matrix = self.count_vectorizer.fit_transform(self.documents.astype(&#39;U&#39;))</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.summary"><code class="name flex">
+<span>def <span class="ident">summary</span></span>(<span>self, topic_matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Run the topic modelling analyse of the topic_matrix given in parameters </p>
+<p><code>topic_matrix</code>: the topic matrix of the model</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def summary(self, topic_matrix):
+    &#34;&#34;&#34;
+    Run the topic modelling analyse of the topic_matrix given in parameters \n\n
+    `topic_matrix`: the topic matrix of the model \n
+    &#34;&#34;&#34;
+    self.get_keys(topic_matrix)
+
+    self.keys_to_counts()
+
+    print(&#39;Computing top words&#39;)
+    self.logger.info(&#39;Computing top words&#39;)
+    self.get_top_n_words(30, self.keys, self.document_term_matrix, self.count_vectorizer)
+
+    print(&#39;Displaying top words&#39;)
+    self.logger.info(&#39;Displaying top words&#39;)
+    self.display_top_n_word()
+
+    print(&#39;Computing topics per postal code by counts&#39;)
+    self.logger.info(&#39;Computing topics per postal code by counts&#39;)
+    self.topic_postal_code(region=False, percentage=False)
+
+    print(&#39;Computing topics per postal code by percentage&#39;)
+    self.logger.info(&#39;Computing topics per postal code by percentage&#39;)
+    self.topic_postal_code(region=False, percentage=True)
+
+    self.topic_postal_code(region=True, percentage=False)
+
+    self.topic_postal_code(region=True, percentage=True)
+
+    print(&#39;Computing words weights per topics&#39;)
+    self.logger.info(&#39;Computing words weigths per topics&#39;)
+    self.get_topics_words_weigths_counts(n_words=50)
+
+    print(&#39;Displaying words weigths per topics&#39;)
+    self.logger.info(&#39;Displaying words weigths per topics&#39;)
+    self.display_topics_words_weights_counts(n_words=20)
+
+    print(&#39;Topic Correlation&#39;)
+    self.logger.info(&#39;Topic Correlation&#39;)
+    self.topic_correlation(topic_matrix)
+
+    if self.report:
+        self.pdf.close()
+
+    if self._cluster:
+        print(&#39;Dimensional Reduction&#39;)
+        self.logger.info(&#39;Dimensional Reduction&#39;)
+        tsne_vectors = self.dimensional_reduction_tsne(topic_matrix)
+
+        print(&#39;Get Mean Topic Vectors&#39;)
+        self.logger.info(&#39;Get Mean Topic Vectors&#39;)
+        self.get_mean_topic_vectors(self.keys, tsne_vectors)
+
+        print(&#39;Displaying Cluster&#39;)
+        self.logger.info(&#39;Displaying Cluster&#39;)
+        self.display_cluster(tsne_vectors)
+
+    print(&#39;File Analysed !&#39;)
+    self.logger.info(&#39;File Analysed !&#39;)
+
+    self.logger.removeHandler(self.logger_file_handler)
+    del self.logger, self.logger_file_handler</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.topic_correlation"><code class="name flex">
+<span>def <span class="ident">topic_correlation</span></span>(<span>self, topic_matrix)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Analyse the correlation between topic </p>
+<p><code>topic_matrix</code>: self.topic_matrix</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def topic_correlation(self, topic_matrix):
+    &#34;&#34;&#34;
+    Analyse the correlation between topic \n \n
+    `topic_matrix`: self.topic_matrix \n
+    &#34;&#34;&#34;
+    data = pd.DataFrame(data=topic_matrix)
+    corr = data.corr()
+    fig, ax = plt.subplots(figsize=(16, 8), sharey=&#39;all&#39;, dpi=160)
+    cax = ax.matshow(corr, cmap=&#39;coolwarm&#39;, vmin=-1, vmax=1)
+    fig.colorbar(cax)
+    ticks = np.arange(0, len(data.columns), 1)
+    ax.set_xticks(ticks)
+    plt.xticks(rotation=90)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(data.columns)
+    ax.set_yticklabels(data.columns)
+
+    fig.suptitle(&#39;Topic Correlation&#39;)
+
+    if self.report:
+        self.pdf.savefig(fig)
+
+    if self._display:
+        plt.show()
+    else:
+        plt.close(fig)</code></pre>
+</details>
+</dd>
+<dt id="TopicModelling.Topic_Modelling.TopicModelling.topic_postal_code"><code class="name flex">
+<span>def <span class="ident">topic_postal_code</span></span>(<span>self, region=False, percentage=False)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Analyse the importance of each topic per postal codes or region </p>
+<p><code>region</code>: to group the postal codes into region or note </p>
+<p><code>percentage</code>: to display in percentage or in number of occurence</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def topic_postal_code(self, region=False, percentage=False):
+    &#34;&#34;&#34;
+    Analyse the importance of each topic per postal codes or region \n\n
+    `region`: to group the postal codes into region or note \n
+    `percentage`: to display in percentage or in number of occurence \n
+    &#34;&#34;&#34;
+    if &#39;authorZipCode&#39; not in self.df.columns:
+        return
+
+    if region:
+        postal_codes = TopicModelling.region_preprocessing(self.df)[&#39;region&#39;]
+    else:
+        postal_codes = TopicModelling.postal_code_preprocessing(self.df)
+
+    postal_codes_index = dict.fromkeys(postal_codes)
+    postal_codes_unique = list(postal_codes_index.keys())
+
+    if not region:
+        postal_codes_unique = [int(float(x)) for x in postal_codes_unique]
+        postal_codes_unique.sort()
+        postal_codes_unique = [str(x).zfill(2) for x in postal_codes_unique]
+
+    for key in list(postal_codes_index):
+        if not region:
+            key = str(int(float(key))).zfill(2)
+        postal_codes_index[key] = postal_codes_unique.index(key)
+
+    count_topic_postal = np.zeros((len(postal_codes_unique), self.n_topics))
+
+    for i in tqdm(range(len(self.keys))):
+        if not region:
+            count_topic_postal[postal_codes_index[str(int(float(postal_codes[i]))).zfill(2)]][self.keys[i]] += 1
+        else:
+            count_topic_postal[postal_codes_index[postal_codes[i]]][self.keys[i]] += 1
+
+    self.df_count_topic_postal = pd.DataFrame(data=count_topic_postal, index=postal_codes_unique)
+    self.df_count_topic_postal.columns = [&#39;Topic {}&#39;.format(i) for i in range(self.n_topics)]
+
+    if percentage:
+        self.df_count_topic_postal = self.df_count_topic_postal.div(self.df_count_topic_postal.sum(axis=1), axis=0)
+        self.df_count_topic_postal.fillna(0)
+
+    fig, ax = plt.subplots(figsize=(14, 10))
+    ax = sb.heatmap(self.df_count_topic_postal, cmap=&#34;YlGnBu&#34;, ax=ax)
+
+    if self.report:
+        self.pdf.savefig(fig)
+
+    if self._display:
+        plt.show()
+    else:
+        plt.close(fig)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="TopicModelling" href="index.html">TopicModelling</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="TopicModelling.Topic_Modelling.TopicModelling" href="#TopicModelling.Topic_Modelling.TopicModelling">TopicModelling</a></code></h4>
+<ul class="">
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.__init__" href="#TopicModelling.Topic_Modelling.TopicModelling.__init__">__init__</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.dimensional_reduction_tsne" href="#TopicModelling.Topic_Modelling.TopicModelling.dimensional_reduction_tsne">dimensional_reduction_tsne</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.display_cluster" href="#TopicModelling.Topic_Modelling.TopicModelling.display_cluster">display_cluster</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.display_top_n_word" href="#TopicModelling.Topic_Modelling.TopicModelling.display_top_n_word">display_top_n_word</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.display_topics_words_weights_counts" href="#TopicModelling.Topic_Modelling.TopicModelling.display_topics_words_weights_counts">display_topics_words_weights_counts</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.display_wordcloud" href="#TopicModelling.Topic_Modelling.TopicModelling.display_wordcloud">display_wordcloud</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.find_region" href="#TopicModelling.Topic_Modelling.TopicModelling.find_region">find_region</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.get_keys" href="#TopicModelling.Topic_Modelling.TopicModelling.get_keys">get_keys</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.get_mean_topic_vectors" href="#TopicModelling.Topic_Modelling.TopicModelling.get_mean_topic_vectors">get_mean_topic_vectors</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.get_top_n_words" href="#TopicModelling.Topic_Modelling.TopicModelling.get_top_n_words">get_top_n_words</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.get_topics_words_weigths_counts" href="#TopicModelling.Topic_Modelling.TopicModelling.get_topics_words_weigths_counts">get_topics_words_weigths_counts</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.initiate_documents" href="#TopicModelling.Topic_Modelling.TopicModelling.initiate_documents">initiate_documents</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.keys_to_counts" href="#TopicModelling.Topic_Modelling.TopicModelling.keys_to_counts">keys_to_counts</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.postal_code_preprocessing" href="#TopicModelling.Topic_Modelling.TopicModelling.postal_code_preprocessing">postal_code_preprocessing</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.preprocessing" href="#TopicModelling.Topic_Modelling.TopicModelling.preprocessing">preprocessing</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.region_preprocessing" href="#TopicModelling.Topic_Modelling.TopicModelling.region_preprocessing">region_preprocessing</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.summary" href="#TopicModelling.Topic_Modelling.TopicModelling.summary">summary</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.topic_correlation" href="#TopicModelling.Topic_Modelling.TopicModelling.topic_correlation">topic_correlation</a></code></li>
+<li><code><a title="TopicModelling.Topic_Modelling.TopicModelling.topic_postal_code" href="#TopicModelling.Topic_Modelling.TopicModelling.topic_postal_code">topic_postal_code</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
